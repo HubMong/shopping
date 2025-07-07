@@ -13,12 +13,12 @@ main 브런치 하나에 각각 순서를 정해서 업로드 진행
 4)먼저 개발된 순서대로 github 업로드
 
 <프로젝트 순서>
-| 1  | GitHub Organization 생성 및 팀원 초대     |
-| 2  | 프로젝트 구조 설계 및 초기 commit (main)      |
-| 3  | 팀원들 clone 후 각자 브랜치 생성              |
-| 4  | 기능 개발 → 각자 브랜치에서 commit            |
-| 5  | 완료된 기능 순서대로 Pull Request → main 병합 |
-| 6  | 최종 배포 전 main 브랜치 기준 통합 테스트         |
+1 GitHub Organization 생성 및 팀원 초대  
+2 프로젝트 구조 설계 및 초기 commit (main)  
+3 팀원들 clone 후 각자 브랜치 생성        
+4 기능 개발 → 각자 브랜치에서 commit   
+5 완료된 기능 순서대로 Pull Request → main 병합 
+6 최종 배포 전 main 브랜치 기준 통합 테스트 
 
 <화면 구현>
 (사용자)
