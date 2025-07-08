@@ -1,0 +1,14 @@
+# IDE 설정
+.classpath
+.project
+.settings/
+
+# 빌드 산출물
+/target/
+
+# OS 특화 파일
+.DS_Store
+Thumbs.db
+
+# 로그 파일
+*.log
