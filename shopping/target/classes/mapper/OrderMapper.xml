@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.OrderMapper">
+
+  <insert id="insertOrder" parameterType="model.Order">
+    <selectKey keyProperty="orderId" resultType="int" order="BEFORE">
+        SELECT orders_seq.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO orders (order_id, member_id, total_amount)
+    VALUES (#{orderId}, #{memberId}, #{totalAmount})
+  </insert>
+
+  <insert id="insertOrderItem" parameterType="model.OrderItem">
+    INSERT INTO order_items (order_item_id, order_id, book_id, quantity, price, TITLE, AUTHOR)
+    VALUES (order_items_seq.NEXTVAL, #{orderId}, #{bookId}, #{quantity}, #{price}, #{title}, #{author})
+  </insert>
+
+  <select id="selectOrderItemsByOrderId" parameterType="int" resultType="model.OrderItem">
+    SELECT
+      oi.order_item_id,
+      oi.order_id,
+      oi.book_id,
+      oi.quantity,
+      oi.price,
+      oi.TITLE,
+      oi.AUTHOR
+    FROM order_items oi
+    WHERE oi.order_id = #{orderId}
+  </select>
+
+  <resultMap id="orderResultMap" type="model.Order">
+    <id property="orderId" column="order_id"/>
+    <result property="memberId" column="member_id"/>
+    <result property="orderDate" column="order_date"/>
+    <result property="totalAmount" column="total_amount"/>
+    <collection property="items" ofType="model.OrderItem" select="selectOrderItemsByOrderId" column="order_id"/>
+  </resultMap>
+
+  <select id="selectOrdersByMemberId" parameterType="string" resultMap="orderResultMap">
+    SELECT
+      order_id,
+      member_id,
+      order_date,
+      total_amount
+    FROM orders
+    WHERE member_id = #{memberId}
+    ORDER BY order_date DESC
+  </select>
+
+</mapper>
