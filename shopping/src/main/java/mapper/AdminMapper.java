@@ -2,9 +2,11 @@ package mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import model.Book;
 
@@ -14,7 +16,19 @@ public interface AdminMapper {
 	@Select("select * from book")
 	public List<Book> getBookList();
 	
-	@Insert("insert into book (book_id, title, content, price, imagepath) "
-			+ "values (book_seq.NEXTVAL, #{title}, #{content}, #{price}, #{imagepath})")
+	@Insert("insert into book (id, title, author, content, price, imagePath) "
+			+ "values (book_seq.NEXTVAL, #{title}, #{author}, #{content}, #{price}, #{imagePath})")
 	public int save(Book book);
+	
+	@Select("select * from book where id = #{id}")
+	public Book getBook(int id);
+	
+	@Update("update book set title=#{title}, author=#{author}, content=#{content}, "
+			+ "price=#{price}, imagePath=#{imagePath} where id=#{id}")
+	public void update(Book book);
+	
+	@Delete("delete from book where id=#{id}")
+	public void delete(int id);
+	
+	
 }

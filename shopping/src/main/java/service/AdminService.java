@@ -32,4 +32,16 @@ public class AdminService {
 		}
 		mapper.save(book);
 	}
+
+	public Book getBook(int id) {
+		return mapper.getBook(id);
+	}
+
+	public void update(Book book) {
+		mapper.update(book);
+	}
+
+	public void delete(int id) {
+		mapper.delete(id);
+	}
 }

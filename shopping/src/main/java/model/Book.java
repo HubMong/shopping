@@ -9,9 +9,10 @@ import lombok.ToString;
 @Data
 @ToString
 public class Book {
-	private int book_id;
+	private int id;
 	private String title;
-	private String content;
+	private String author;
 	private int price;
-	private String imagepath;
+	private String content;
+	private String imagePath;
 }
