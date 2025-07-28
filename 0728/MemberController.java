@@ -111,8 +111,8 @@ public class MemberController {
 		 */
 
         // 전화번호 중복 확인
-        if (memberService.selectByHp(phone) != null) {
-            redirectAttributes.addFlashAttribute("hpError", "이미 사용 중인 전화번호입니다.");
+        if (memberService.selectByPhone(phone) != null) {
+            redirectAttributes.addFlashAttribute("phoneError", "이미 사용 중인 전화번호입니다.");
             return "redirect:/member/registerform";
         }
 

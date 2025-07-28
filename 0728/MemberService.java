@@ -35,7 +35,7 @@ public class MemberService {
 	 * memberMapper.selectByEmail(email); }
 	 */
 
-    public Member selectByHp(String phone) {
+    public Member selectByPhone(String phone) {
         return memberMapper.selectByHp(phone);
     }
     
