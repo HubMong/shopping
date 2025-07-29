@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.MemberMapper">
+
+  <!-- 회원 가입 -->
+  <insert id="insert" parameterType="model.Member">
+    INSERT INTO members (id, password, name, email, hp, address)
+    VALUES (#{id}, #{password}, #{name}, #{email}, #{hp}, #{address})
+  </insert>
+
+  <!-- 아이디로 회원 조회 -->
+  <select id="selectById" parameterType="string" resultType="model.Member">
+    SELECT id, password, name, email, hp, address FROM members WHERE id = #{id}
+  </select>
+
+  <!-- 이메일로 회원 조회 -->
+  <select id="selectByEmail" parameterType="string" resultType="model.Member">
+    SELECT id, password, name, email, hp, address FROM members WHERE email = #{email}
+  </select>
+
+  <!-- 전화번호로 회원 조회 -->
+  <select id="selectByHp" parameterType="string" resultType="model.Member">
+    SELECT id, password, name, email, hp, address FROM members WHERE hp = #{hp}
+  </select>
+
+  <!-- 전체 회원 조회 -->
+  <select id="selectAll" resultType="model.Member">
+    SELECT id, password, name, email, hp, address FROM members
+  </select>
+
+  <!-- 회원 정보 수정 -->
+  <update id="update" parameterType="model.Member">
+    UPDATE members
+    SET
+      password = #{password},
+      name = #{name},
+      email = #{email},
+      hp = #{hp},
+      address = #{address}
+    WHERE id = #{id}
+  </update>
+
+  <!-- 회원 삭제 -->
+  <delete id="delete" parameterType="string">
+    DELETE FROM members WHERE id = #{id}
+  </delete>
+
+</mapper>
