@@ -1,0 +1,72 @@
+drop table member;
+
+CREATE TABLE member (
+    id NUMBER PRIMARY KEY,               -- 내부 식별용 회원 고유 ID (자동 증가)
+    user_id VARCHAR(100) NOT NULL,                   -- 로그인용 사용자 ID
+    password VARCHAR(100) NOT NULL,                  -- 로그인 비밀번호
+    name VARCHAR(100),                               -- 실명 (선택적으로 활용 가능)
+    phone VARCHAR(100),                              -- 전화번호 (배송 연락용 등)
+    address VARCHAR(200),                            -- 배송지 주소
+    created_at DATE DEFAULT CURRENT_DATE             -- 회원 가입일 (기본값: 오늘)
+);
+
+drop sequence member_seq;
+create sequence member_seq;
+
+select * from member;
+
+insert into member(id, user_id ,password,name,phone,address,created_at) values (member_seq.nextval,'admin','admin','관리자','010-1111-1111','서울', sysdate);
+
+
+drop table book;
+
+CREATE TABLE book (
+    id NUMBER PRIMARY KEY,               -- 책 고유 ID (자동 증가)
+    title VARCHAR(200) NOT NULL,                     -- 책 제목
+    author VARCHAR(100),                             -- 저자 이름
+    price INT NOT NULL,                              -- 책 가격
+    description VARCHAR(500),                        -- 책 설명/소개글
+    image VARCHAR(500),                               -- 책 표지 이미지 경로(URL 또는 파일명)
+    stock varchar(500)
+);
+
+drop sequence book_seq;
+create sequence book_seq;
+
+select * from book;
+
+drop table cart;
+CREATE TABLE cart (
+    id NUMBER PRIMARY KEY ,                              -- 장바구니 항목 고유 ID
+    member_id INT NOT NULL,                       -- 어떤 사용자의 장바구니인지 (FK → member)
+    book_id INT NOT NULL,                           -- 어떤 책을 담았는지 (FK → book)
+    quantity INT NOT NULL,                           -- 담은 수량
+    added_at DATE DEFAULT CURRENT_DATE,  -- 장바구니에 담은 날짜
+
+    -- 외래 키 설정
+    FOREIGN KEY (member_id) REFERENCES member(id),
+    FOREIGN KEY (book_id) REFERENCES book(id)
+);
+
+drop sequence cart_seq;
+create sequence cart_seq;
+
+-- 결제 내역 테이블: 실제 결제된 항목만 저장
+drop table ORDERS CASCADE CONSTRAINTS;
+CREATE TABLE ORDERS(
+    id NUMBER PRIMARY KEY ,                             -- 주문 고유 ID
+    member_id INT NOT NULL,                      -- 주문한 회원 (FK → member)
+    book_id INT NOT NULL,                          -- 주문한 책 (FK → book)
+    quantity INT NOT NULL,                          -- 구매 수량
+    total_price INT NOT NULL,                       -- 총 결제 금액 (수량 × 단가)
+    order_date DATE DEFAULT CURRENT_DATE, -- 결제일 (기본: 오늘)
+
+    FOREIGN KEY (member_id) REFERENCES member(id),
+    FOREIGN KEY (book_id) REFERENCES book(id)
+);
+
+drop sequence orders_seq;
+create sequence orders_seq;
+
+
+select * from orders;
