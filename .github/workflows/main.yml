@@ -1,11 +1,9 @@
-# .github/workflows/java-ci.yml
-name: Java CI
+nameL Create Output File
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatcher: # 수동 실행도 가능하게
 
 jobs:
   build:
