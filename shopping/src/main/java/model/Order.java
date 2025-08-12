@@ -18,6 +18,7 @@ public class Order {
     private int quantity;
     private int totalPrice;
     private Date orderDate;
+    private String transactionId;
     private Book book;
     private Member member;
 }
