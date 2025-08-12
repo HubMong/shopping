@@ -20,4 +20,5 @@ public class Member {
     private String phone;
     private String address;
     private Date createdAt;
+    private String role;
 }

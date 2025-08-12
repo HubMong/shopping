@@ -19,8 +19,8 @@ public interface MemberMapper {
 	@Select("SELECT * FROM member")
 	List<Member> selectAll();
 
-	@Insert("INSERT INTO member (id, user_id, password, name, phone, address, created_at) "
-			+ "VALUES (MEMBER_SEQ.NEXTVAL, #{userId}, #{password}, #{name}, #{phone}, #{address}, CURRENT_DATE)")
+	@Insert("INSERT INTO member (id, user_id, password, name, phone, address, created_at, role) "
+			+ "VALUES (MEMBER_SEQ.NEXTVAL, #{userId}, #{password}, #{name}, #{phone}, #{address}, CURRENT_DATE, 'USER')")
 	int insert(Member member);
 
 	// 추가: userId 기준으로 수정
