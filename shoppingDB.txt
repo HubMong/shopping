@@ -27,7 +27,7 @@ CREATE TABLE book (
     price INT NOT NULL,                              -- 책 가격
     description VARCHAR(500),                        -- 책 설명/소개글
     image VARCHAR(500),                               -- 책 표지 이미지 경로(URL 또는 파일명)
-    stock varchar(500)
+    stock INT default 0
 );
 
 drop sequence book_seq;
