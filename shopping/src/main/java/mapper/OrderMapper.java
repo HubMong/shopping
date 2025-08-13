@@ -17,8 +17,8 @@ public interface OrderMapper {
     @Select("SELECT * FROM ORDERS ORDER BY order_date desc")
     public List<Order> selectAll();
 
-    @Insert("INSERT INTO ORDERS (id, member_id, book_id, quantity, total_price, order_date) " +
-         "VALUES (ORDERS_SEQ.NEXTVAL, #{memberId}, #{bookId}, #{quantity}, #{totalPrice}, CURRENT_DATE)")
+    @Insert("INSERT INTO ORDERS (id, member_id, book_id, quantity, total_price, order_date, transaction_id) " +
+            "VALUES (ORDERS_SEQ.NEXTVAL, #{memberId}, #{bookId}, #{quantity}, #{totalPrice}, CURRENT_DATE, #{transactionId})")
     public int insert(Order order);
     
     // 주문 ID로 특정 주문 조회

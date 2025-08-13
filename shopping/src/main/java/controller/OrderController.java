@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -39,7 +40,8 @@ public class OrderController {
 	@GetMapping("/member/{memberId}")
 	public String getOrdersByMemberId(@PathVariable int memberId, Model model) {
 		List<Order> orderList = orderService.getOrdersByMemberId(memberId);
-		model.addAttribute("orders", orderList);
+		Map<String, List<Order>> groupedOrders = orderList.stream().collect(Collectors.groupingBy(Order::getTransactionId));
+		model.addAttribute("groupedOrders", groupedOrders);
 		return "user/member_orders"; // → /WEB-INF/views/order/member_orders.jsp
 	}
 
@@ -73,6 +75,9 @@ public class OrderController {
 		order.setBook(book);
 		order.setOrderDate(new Date());
 		
+		String transactionId = loginUser.getId() + "_" + System.currentTimeMillis();
+	    order.setTransactionId(transactionId);
+	    
 		orderService.insertOrder(order);
 		
 		session.setAttribute("order", order);
@@ -144,7 +149,7 @@ public class OrderController {
 		if (loginUser == null) {
 			return "redirect:/member/loginform";
 		}
-
+		
 		Order singleOrder = (Order) session.getAttribute("order");
 		List<Order> orderList = (List<Order>) session.getAttribute("orders");
 
@@ -154,11 +159,17 @@ public class OrderController {
 		}
 
 		if (singleOrder != null) {
+			// 단일 주문에도 고유한 transactionId 부여
+            String transactionId = "single_" + loginUser.getId() + "_" + System.currentTimeMillis();
+            singleOrder.setTransactionId(transactionId);
 			orderService.insertOrder(singleOrder);
 		}
 
 		if (orderList != null && !orderList.isEmpty()) {
+			// 장바구니 주문은 동일한 transactionId 부여
+            String transactionId = loginUser.getId() + "_" + System.currentTimeMillis();
 			for (Order order : orderList) {
+                order.setTransactionId(transactionId);
 				orderService.insertOrder(order);
 			}
 		}
