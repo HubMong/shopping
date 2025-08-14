@@ -21,11 +21,12 @@
 <div class="top-banner">서일 문고에 오신 것을 환영합니다.</div>
 <header>
     <div class="header-container header-top">
-        <div class="logo"><div class="logo-text" onclick="${pageContext.request.contextPath}/books">SEOIL 서일문고</div></div>
+        <div class="logo"><div class="logo-text" onclick="location.href='${pageContext.request.contextPath}/books'">SEOIL 서일문고</div></div>
         <form action="${pageContext.request.contextPath}/books" method="get" class="search-box">
             <input type="text" name="keyword" placeholder="도서를 검색해보세요" value="${searchKeyword}">
             <button type="submit"><i class="fas fa-search"></i></button>
         </form>
+        
         <div class="user-menu">
             <c:choose>
                 <c:when test="${empty sessionScope.loginUser}">
@@ -44,7 +45,7 @@
 <nav class="main-nav">
     <div class="nav-container">
         <ul class="category-menu">
-            <li><a href="#">서일문고</a></li>
+            <li><a href="${pageContext.request.contextPath}/books">서일문고</a></li>
             <li class="active"><a href="#">도서</a></li>
             <li><a href="#">베스트셀러</a></li>
             <li><a href="#">신간</a></li>
