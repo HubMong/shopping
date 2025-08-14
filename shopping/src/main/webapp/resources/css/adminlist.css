@@ -73,19 +73,33 @@
 .user-menu a i {
 	margin-right: 5px;
 }
-
-.logout-button, .add-button {
-	background-color: #fff;
-	padding: 8px 8px;
-	color: #2a4091;
-	border: 1px solid #2a4091;
-	border-radius: 5px;
+a { text-decoration: none; color: inherit; }
+.auth-button { padding: 8px 16px; border-radius: 6px; font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; }
+.logout-button{
+    background-color: #f0f2f5; /* Light gray background */
+    color: #555; /* Darker gray text */
+    border: none;
+    padding: 8px 14px; /* Slightly smaller padding */
+    border-radius: 6px; /* More rounded corners */
+    font-weight: 500; /* Medium font weight */
+    transition: background-color 0.2s ease, color 0.2s ease;}
+.logout-button:hover{
+    background-color: #e0e2e5; /* Slightly darker gray on hover */
+    color: #333;
 }
-
-.logout-button:hover, .add-button:hover {
-	background-color: #f3f6fd;
+.add-button{
+    background-color: #f0f2f5; /* Light gray background */
+    color: #2a4091; /* Darker gray text */
+    border: none;
+    padding: 8px 14px; /* Slightly smaller padding */
+    border-radius: 6px; /* More rounded corners */
+    font-weight: 500; /* Medium font weight */
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
-
+.add-button:hover {
+    background-color: #e0e2e5; /* Slightly darker gray on hover */
+    color: #333;
+}
 table {
 	width: 100%;
 	border-collapse: collapse;
