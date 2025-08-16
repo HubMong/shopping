@@ -34,7 +34,7 @@
                                 <small>${order.book.author}</small>
                             </div>
                         </td>
-                        <td>${order.quantity}</td>
+            			<td>${order.quantity}</td>
                         <td><fmt:formatNumber value="${order.book.price}" type="number" />원</td>
                         <td><fmt:formatNumber value="${order.totalPrice}" type="number" />원</td>
                     </tr>

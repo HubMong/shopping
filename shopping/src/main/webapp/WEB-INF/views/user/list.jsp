@@ -14,10 +14,6 @@
 
 <body>
 
-<c:if test="${not empty sessionScope.loginUser and sessionScope.loginUser.userId == 'admin'}">
-    <c:redirect url="/admin/books"/>
-</c:if>
-
 <div class="top-banner">서일 문고에 오신 것을 환영합니다.</div>
 <header>
     <div class="header-container header-top">
@@ -50,6 +46,9 @@
             <li><a href="#">베스트셀러</a></li>
             <li><a href="#">신간</a></li>
             <li><a href="#">이벤트</a></li>
+            <c:if test="${sessionScope.loginUser.role == 'ADMIN'}">
+			    <li><a href="/admin/books">관리자 페이지</a></li>
+			</c:if>
         </ul>
         <div class="right-menu">
             <a href="#">회원혜택</a>

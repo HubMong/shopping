@@ -25,4 +25,8 @@ public class BookService {
     public List<Book> searchBooks(String keyword) {
         return bookMapper.searchBooks(keyword);
     }
+    
+    public void updateStock(int bookId, int quantity) {
+    	bookMapper.updateStock(bookId, quantity);
+    }
 }

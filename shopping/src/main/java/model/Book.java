@@ -20,5 +20,5 @@ public class Book {
     private int stock; 
     private int salesVolumn;
     private Member member;
-    private List<review> reviewList;
+    private List<Review> reviewList;
 }

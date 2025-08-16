@@ -58,9 +58,6 @@ public class MemberController {
         Member member = memberService.login(userId, password); // [수정] int id → String userId
         if (member != null) {
             session.setAttribute("loginUser", member);
-            if ("admin".equals(member.getUserId())) {
-                return "redirect:/admin/books";
-            }
             return "redirect:/books";
         } else {
             redirectAttributes.addFlashAttribute("errorMsg", "아이디 또는 비밀번호가 올바르지 않습니다.");

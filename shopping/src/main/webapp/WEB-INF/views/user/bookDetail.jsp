@@ -68,5 +68,11 @@
         alert("${successMsg}");
     </script>
 </c:if>
+<c:if test="${not empty errorMsg}">
+    <script>
+        alert("${errorMsg}");
+    </script>
+</c:if>
+
 </body>
 </html>

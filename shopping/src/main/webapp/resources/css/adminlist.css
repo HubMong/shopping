@@ -74,31 +74,46 @@
 	margin-right: 5px;
 }
 a { text-decoration: none; color: inherit; }
-.auth-button { padding: 8px 16px; border-radius: 6px; font-weight: 500; font-size: 14px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; }
-.logout-button{
-    background-color: #f0f2f5; /* Light gray background */
-    color: #555; /* Darker gray text */
-    border: none;
-    padding: 8px 14px; /* Slightly smaller padding */
-    border-radius: 6px; /* More rounded corners */
-    font-weight: 500; /* Medium font weight */
-    transition: background-color 0.2s ease, color 0.2s ease;}
-.logout-button:hover{
-    background-color: #e0e2e5; /* Slightly darker gray on hover */
-    color: #333;
+.auth-button {
+	padding: 8px 16px;
+	border-radius: 6px;
+	font-weight: 500;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	text-decoration: none;
 }
-.add-button{
-    background-color: #f0f2f5; /* Light gray background */
-    color: #2a4091; /* Darker gray text */
-    border: none;
-    padding: 8px 14px; /* Slightly smaller padding */
-    border-radius: 6px; /* More rounded corners */
-    font-weight: 500; /* Medium font weight */
-    transition: background-color 0.2s ease, color 0.2s ease;
+
+.add-button {
+	background-color: #fff;
+	color: #2a4091;
+	border: 1px solid #2a4091;
 }
+
 .add-button:hover {
-    background-color: #e0e2e5; /* Slightly darker gray on hover */
-    color: #333;
+	background-color: #f3f6fd;
+}
+
+.logout-button {
+	background-color: #fff;
+	color: #2a4091;
+	border: 1px solid #2a4091;
+
+}
+
+.logout-button:hover {
+	background-color: #e0e2e5; /* Slightly darker gray on hover */
+	color: #333;
+}
+
+.userpage-button {
+	background-color: #fff;
+	color: #2a4091;
+	border: 1px solid #2a4091;
+}
+
+.userpage-button:hover {
+	background-color: #f3f6fd;
 }
 table {
 	width: 100%;
@@ -122,7 +137,6 @@ img {
 	border-radius: 5px;
 	cursor: pointer;
 }
-
 .edit-btn {
 	background-color: #4CAF50;
 	color: white;

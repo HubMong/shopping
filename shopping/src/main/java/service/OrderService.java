@@ -23,10 +23,13 @@ public class OrderService {
     
     @Autowired
     private MemberMapper memberMapper;
+    
 
     // 주문 추가
     public int insertOrder(Order order) {
-        return orderMapper.insert(order);
+    	int result = orderMapper.insert(order);
+    	bookMapper.updateStock(order.getBookId(), order.getQuantity());
+        return result;
     }
 
     // 특정 회원의 모든 주문 조회
