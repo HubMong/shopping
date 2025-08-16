@@ -23,7 +23,7 @@
       </form>
       
       <div class="user-menu">
-        <span class="welcome-text">관리자님</span>
+        <a href="${pageContext.request.contextPath}/books" class="auth-button userpage-button">사용자 페이지</a>
         <a href="${pageContext.request.contextPath}/admin/addbook" class="auth-button add-button">책 추가</a>
         <a href="${pageContext.request.contextPath}/member/logout" class="auth-button logout-button">로그아웃</a>
       </div>
@@ -60,7 +60,7 @@
           <td>${book.title}</td>
           <td>${book.author}</td>
           <td><fmt:formatNumber value="${book.price}" type="number" pattern="#,###" /> 원</td>
-          <td>${book.stock}</td>
+          <td>${book.stock}개</td>
           <td>
             <!-- 책 상세보기만 남기기 -->
             <a class="action-btn detail-btn btn btn-success" href="<c:url value='/admin/books/detail'><c:param name='id' value='${book.id}'/></c:url>">

@@ -41,7 +41,7 @@
                         <form action="${pageContext.request.contextPath}/cart/update" method="post">
                             <input type="hidden" name="bookId" value="${item.book.id}">
                             <button type="submit" name="action" value="decrease" class="quantity-btn">-</button>
-                            <input type="text" class="quantity-input" value="${item.quantity}" readonly>
+                            <input type="text" class="quantity-input" value="${item.quantity}" >
                             <button type="submit" name="action" value="increase" class="quantity-btn">+</button>
                         </form>
                     </div>

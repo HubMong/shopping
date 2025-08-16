@@ -66,6 +66,12 @@ public class OrderController {
 			return "redirect:/books";
 		}
 		
+		// 재고 확인
+		if (book.getStock() < quantity) {
+			redirectAttributes.addFlashAttribute("errorMsg", "재고가 부족합니다.");
+			return "redirect:/books/" + bookId;
+		}
+		
 		Order order = new Order();
 		order.setBookId(book.getId());
 		order.setQuantity(quantity);
@@ -77,8 +83,6 @@ public class OrderController {
 		
 		String transactionId = loginUser.getId() + "_" + System.currentTimeMillis();
 	    order.setTransactionId(transactionId);
-	    
-		orderService.insertOrder(order);
 		
 		session.setAttribute("order", order);
 		return "redirect:/orders/payment"; 
@@ -159,8 +163,15 @@ public class OrderController {
 		}
 
 		if (singleOrder != null) {
+			// 최종 재고 확인
+			Book book = bookService.getBookById(singleOrder.getBookId());
+			if(book.getStock() < singleOrder.getQuantity()) {
+				redirectAttributes.addFlashAttribute("errorMsg", "재고가 부족하여 주문을 완료할 수 없습니다. (상품: " + book.getTitle() + ")");
+				return "redirect:/cart";
+			}
+			
 			// 단일 주문에도 고유한 transactionId 부여
-            String transactionId = "single_" + loginUser.getId() + "_" + System.currentTimeMillis();
+            String transactionId =loginUser.getId() + "_" + System.currentTimeMillis();
             singleOrder.setTransactionId(transactionId);
 			orderService.insertOrder(singleOrder);
 		}
@@ -169,6 +180,12 @@ public class OrderController {
 			// 장바구니 주문은 동일한 transactionId 부여
             String transactionId = loginUser.getId() + "_" + System.currentTimeMillis();
 			for (Order order : orderList) {
+				// 최종 재고 확인
+				Book book = bookService.getBookById(order.getBookId());
+				if(book.getStock() < order.getQuantity()) {
+					redirectAttributes.addFlashAttribute("errorMsg", "재고가 부족하여 주문을 완료할 수 없습니다. (상품: " + book.getTitle() + ")");
+					return "redirect:/cart";
+				}
                 order.setTransactionId(transactionId);
 				orderService.insertOrder(order);
 			}
