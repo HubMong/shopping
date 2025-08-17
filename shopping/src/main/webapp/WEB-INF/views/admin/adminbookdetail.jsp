@@ -28,7 +28,7 @@
             <p class="author">저 자 : ${book.author}</p>
             <p class="price">가 격 : ${book.price}원</p>
             <p class="description">내 용 : ${book.description}</p>
-            <p class="stock">재 고 : ${book.stock}</p>
+            <p class="stock">재 고 : ${book.stock}개</p>
 
             <div class="buttons">
                 <form action="${pageContext.request.contextPath}/admin/books/edit" method="get">

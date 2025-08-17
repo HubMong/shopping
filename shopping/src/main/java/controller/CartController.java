@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import model.Book;
 import model.CartItem;
@@ -73,7 +74,8 @@ public class CartController {
     public String updateCart(
             @RequestParam("bookId") int bookId,
             @RequestParam("action") String action,
-            HttpSession session) {
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
         
     	// Service 기능
         Map<Integer, CartItem> cartMap = getCartMap(session);
@@ -82,9 +84,15 @@ public class CartController {
             CartItem item = cartMap.get(bookId);
             
             if ("increase".equals(action)) {
-                item.setQuantity(item.getQuantity()+1);
+            	if(item.getQuantity() < item.getBook().getStock()) {
+            		item.setQuantity(item.getQuantity()+1);
+            	} else {
+            		redirectAttributes.addFlashAttribute("errorMsg", "재고가 부족합니다.");
+            	}
             } else if ("decrease".equals(action)) {
-                item.setQuantity(item.getQuantity()-1);
+            	if(item.getQuantity() > 1) {
+            		item.setQuantity(item.getQuantity()-1);
+            	}
             }
         }
         // 여기까지

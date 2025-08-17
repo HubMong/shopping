@@ -22,19 +22,26 @@
     </div>
     <div class="info">
       <h1>${book.title}</h1>
-      <p class="author">저자: ${book.author}</p>
+      <p class="author">저자 : ${book.author}</p>
       <p class="price"><fmt:formatNumber value="${book.price}" pattern="#,###" />원</p>
       <p class="description">${book.description}</p>
       <div class="buttons">
-        <form action="${pageContext.request.contextPath}/cart/add" method="post">
-          <input type="hidden" name="bookId" value="${book.id}">
-          <button type="submit" class="add-to-cart">장바구니</button>
-        </form>
-        <form action="${pageContext.request.contextPath}/orders/buyNow" method="post">
-            <input type="hidden" name="bookId" value="${book.id}">
-            <input type="hidden" name="quantity" value="1">
-            <button type="submit" class="buy-now">바로 구매</button>
-        </form>
+        <c:choose>
+          <c:when test="${book.stock > 0}">
+            <form action="${pageContext.request.contextPath}/cart/add" method="post">
+              <input type="hidden" name="bookId" value="${book.id}">
+              <button type="submit" class="add-to-cart">장바구니</button>
+            </form>
+            <form action="${pageContext.request.contextPath}/orders/buyNow" method="post">
+                <input type="hidden" name="bookId" value="${book.id}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="buy-now">바로 구매</button>
+            </form>
+          </c:when>
+          <c:otherwise>
+            <button type="button" class="out-of-stock" disabled>품절</button>
+          </c:otherwise>
+        </c:choose>
       </div>
     </div>
   </div>
@@ -68,11 +75,5 @@
         alert("${successMsg}");
     </script>
 </c:if>
-<c:if test="${not empty errorMsg}">
-    <script>
-        alert("${errorMsg}");
-    </script>
-</c:if>
-
 </body>
 </html>

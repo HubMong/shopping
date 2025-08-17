@@ -111,7 +111,8 @@
         </div>
 
         <div class="payment-actions">
-            <form action="<c:url value='/orders/confirm'/>" method="post">
+            <a href="javascript:history.back()" class="btn-back">뒤로가기</a>
+            <form action="<c:url value='/orders/confirm'/>" method="post" style="display: inline;">
                 <button type="submit" class="btn-payment">결제하기</button>
             </form>
         </div>

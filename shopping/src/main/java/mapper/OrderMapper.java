@@ -49,4 +49,7 @@ public interface OrderMapper {
         })
     	List<Order> search(String keyword);
 
+    @Select("SELECT * FROM ORDERS WHERE transaction_id = #{transactionId}")
+    List<Order> selectByTransactionId(String transactionId);
+
 }

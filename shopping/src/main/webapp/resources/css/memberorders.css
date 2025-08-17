@@ -122,17 +122,31 @@ h2 {
     margin-left: 10px;
 }
 
-.btn-back {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #6c757d;
-    color: white;
+.back-button-fixed {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black arrow */
+    border: 1px solid #e0e0e0; /* Subtle border */
+    border-radius: 50%;
+    font-size: 1.9em; /* Adjusted for natural look */
+    font-weight: normal; /* Thinner, more natural stroke */
+    line-height: 1; /* Ensure vertical centering */
+    padding-right: 2px; /* Adjust for visual centering */
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
 }
 
-.btn-back:hover {
-    background-color: #4cae4c;
+.back-button-fixed:hover {
+    background-color: #f0f0f0; /* Slightly gray on hover */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px); /* Apply hover effect */
 }
