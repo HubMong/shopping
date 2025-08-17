@@ -16,6 +16,11 @@
 
 <body>
 
+<c:if test="${empty sessionScope.loginUser or not sessionScope.loginUser.role == 'ADMIN'}">
+    <c:redirect url="/books"/>
+</c:if>
+	
+
 <header>
     <div class="header-container header-top">
         <div class="logo"><div class="logo-text">SEOIL 서일문고</div></div>

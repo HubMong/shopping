@@ -77,4 +77,8 @@ public class OrderService {
         return orders;
     }
 
+    public List<Order> getOrdersByTransactionId(String transactionId) { //이번에 추가된부분
+        return orderMapper.selectByTransactionId(transactionId);
+    }
+
 }

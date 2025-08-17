@@ -37,9 +37,14 @@ public class OrderController {
 	private BookService bookService;
 
 	// ✅ [1] 특정 회원 주문 내역 조회
-	@GetMapping("/member/{memberId}")
-	public String getOrdersByMemberId(@PathVariable int memberId, Model model) {
-		List<Order> orderList = orderService.getOrdersByMemberId(memberId);
+	@GetMapping("/member/orderlist")
+	public String getOrdersByMemberId(HttpSession session, Model model) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+            return "redirect:/member/loginform";
+        }
+		List<Order> orderList = orderService.getOrdersByMemberId(loginUser.getId());
 		Map<String, List<Order>> groupedOrders = orderList.stream().collect(Collectors.groupingBy(Order::getTransactionId));
 		model.addAttribute("groupedOrders", groupedOrders);
 		return "user/member_orders"; // → /WEB-INF/views/order/member_orders.jsp
@@ -196,6 +201,6 @@ public class OrderController {
 		session.removeAttribute("cart");
 
 		redirectAttributes.addFlashAttribute("successMsg", "결제 되었습니다.");
-		return "redirect:/orders/member/" + loginUser.getId();
+		return "redirect:/orders/member/orderlist";
 	}
 }

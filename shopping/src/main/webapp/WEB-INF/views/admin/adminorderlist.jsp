@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -19,6 +19,10 @@
 
 <body>
 
+<c:if test="${empty sessionScope.loginUser or not sessionScope.loginUser.role == 'ADMIN'}">
+    <c:redirect url="/books"/>
+</c:if>
+	
 	<header>
 		<div class="header-container header-top">
 			<div class="logo">
@@ -42,8 +46,6 @@
 	        </div>
        	</div>
 	</header>
-	
-	
 
 	<div class="menu-container">
 	    <div class="menu-box ${page eq 'books' ? 'active' : ''}">
@@ -57,39 +59,60 @@
 	    </div>
 	</div>
 
-	<table>
-		<thead>
-			<tr>
-				<th>주문 번호</th>
-				<th>책 제목</th>
-				<th>회원 이름</th>
-				<th>수량</th>
-				<th>결제 금액</th>
-				<th>결제 일시</th>
-				<th>비고</th>
-			</tr>
-		</thead>
+<table>
+  <thead>
+    <tr>
+      <th>거래 ID</th>
+      <th>책 제목</th>
+      <th>회원 이름</th>
+      <th>총 결제 금액</th>
+      <th>결제 일시</th>
+      <th>상세보기</th>
+    </tr>
+  </thead>
 
-		<tbody>
-			<c:forEach var="order" items="${orders}">
-				<tr>
-					<td>${order.id}</td>
-					<td>${order.book.title}</td>
-					<td>${order.member.name}</td>
-					<td>${order.quantity}</td>
-					<td><fmt:formatNumber value="${order.totalPrice}"
-							type="number" pattern="#,###" /> 원</td>
-					<td><fmt:formatDate value="${order.orderDate}" pattern="yyyy년 MM월 dd일 HH시 mm분 ss초"/></td>
+  <tbody>
+    <c:forEach var="entry" items="${groupedOrders}">
+      <c:set var="firstOrder" value="${entry.value[0]}" />
+      <c:set var="firstTitle" value="${firstOrder.book.title}" />
+      <c:set var="bookCount" value="${fn:length(entry.value)}" />
+      <c:set var="bookSummary" value="${firstTitle}" />
 
-					<td><a class="action-btn detail-btn btn btn-success"
-						href="<c:url value='/admin/adminorderlist/detail'><c:param name='id' value='${order.id}'/></c:url>">
-							주문 상세보기 </a></td>
-				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
+      <c:if test="${bookCount > 1}">
+        <c:set var="bookSummary" value="${firstTitle} 외 ${bookCount - 1}권" />
+      </c:if>
 
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      <c:choose>
+        <c:when test="${fn:length(bookSummary) > 20}">
+          <c:set var="bookSummary" value="${fn:substring(bookSummary, 0, 20)}..." />
+        </c:when>
+      </c:choose>
+
+      <c:set var="totalGroupPrice" value="0" />
+      <c:forEach var="order" items="${entry.value}">
+        <c:set var="totalGroupPrice" value="${totalGroupPrice + order.totalPrice}" />
+      </c:forEach>
+
+      <tr>
+        <td>${entry.key}</td>
+        <td>${bookSummary}</td>
+        <td>${firstOrder.member.name}</td>
+        <td><fmt:formatNumber value="${totalGroupPrice}" pattern="#,###" /> 원</td>
+        <td><fmt:formatDate value="${firstOrder.orderDate}" pattern="yyyy-MM-dd HH:mm" /></td>
+        <td>
+          <form action="${pageContext.request.contextPath}/admin/adminorderlist/detail" method="get" style="display:inline;">
+            <input type="hidden" name="transactionId" value="${entry.key}" />
+            <button type="submit" class="action-btn edit-btn">상세보기</button>
+          </form>
+        </td>
+      </tr>
+    </c:forEach>
+  </tbody>
+</table>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	
+
 </body>
 </html>

@@ -1,5 +1,12 @@
 package controller;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,8 +41,10 @@ public class AdminController {
 	private BookService bookservice;
 
 	@RequestMapping("books")
-	public ModelAndView adminMainlist(ModelAndView mv, 
+	public ModelAndView adminMainlist(ModelAndView mv, HttpSession session, 
 	        @RequestParam(value = "keyword", required = false) String keyword) {
+		Member loginUser = (Member) session.getAttribute("loginUser");
+		mv.addObject("loginUser", loginUser);
 	    if (keyword == null || keyword.trim().isEmpty()) {
 	        mv.addObject("books", adminservice.getBookList());
 	    } else {
@@ -172,27 +181,50 @@ public class AdminController {
 	@RequestMapping("adminorderlist")
 	public ModelAndView adminOrderlist(ModelAndView mv, 
 	        @RequestParam(value = "keyword", required = false) String keyword) {
-	    if (keyword == null || keyword.trim().isEmpty()) {
-	        mv.addObject("orders", orderservice.getAllOrders());
-	    } else {
-	        mv.addObject("orders", orderservice.searchOrders(keyword));
-	    }
-	    mv.addObject("keyword", keyword);
 	    
+	    List<Order> orders;
+	    if (keyword == null || keyword.trim().isEmpty()) {
+	        orders = orderservice.getAllOrders();
+	    } else {
+	        orders = orderservice.searchOrders(keyword);
+	    }
+
+	    // 거래 ID로 묶기
+	    Map<String, List<Order>> groupedOrders = new LinkedHashMap<>();
+	    for (Order order : orders) {
+	        String txId = order.getTransactionId();
+	        groupedOrders.computeIfAbsent(txId, k -> new ArrayList<>()).add(order);
+	    }
+
+	    mv.addObject("groupedOrders", groupedOrders);
+	    mv.addObject("keyword", keyword);
 	    mv.addObject("page", "orders");
 	    mv.setViewName("admin/adminorderlist");
 	    return mv;
 	}
 	
 	@RequestMapping("adminorderlist/detail")
-	public ModelAndView adminOrderDetail(ModelAndView mv, int id) {
-	    // 주문 ID로 주문 정보 조회
-	    Order order = orderservice.getOrderById(id);
-	    mv.addObject("order", order);  // 주문 정보를 모델에 추가
-	    mv.setViewName("admin/adminorderdetail");  // 주문 상세 페이지로 이동
+	public ModelAndView adminOrderDetailByTransaction(@RequestParam("transactionId") String transactionId) {
+	    ModelAndView mv = new ModelAndView();
+	    List<Order> orders = orderservice.getOrdersByTransactionId(transactionId);
+
+	    if (orders == null || orders.isEmpty()) {
+	        mv.setViewName("redirect:/admin/adminorderlist");
+	        return mv;
+	    }
+
+	    for (Order order : orders) {
+	        Book book = bookservice.getBookById(order.getBookId());
+	        Member member = memberservice.selectById(order.getMemberId());
+	        order.setBook(book);
+	        order.setMember(member);
+	    }
+
+	    mv.addObject("orders", orders);
+	    mv.addObject("transactionId", transactionId);
+	    mv.setViewName("admin/adminorderdetail");
 	    return mv;
 	}
-
 	@RequestMapping("adminorderlist/delete")
 	public String adminOrderDelete(String userId) {
 		memberservice.remove(userId);
