@@ -178,6 +178,11 @@ public class OrderController {
 			// 단일 주문에도 고유한 transactionId 부여
             String transactionId =loginUser.getId() + "_" + System.currentTimeMillis();
             singleOrder.setTransactionId(transactionId);
+            
+            // 판매량(salesVolume) 누적
+            book.setSalesVolume(book.getSalesVolume() + singleOrder.getQuantity());
+            bookService.updateSalesVolume(book); // salesVolumn 업데이트
+            
 			orderService.insertOrder(singleOrder);
 		}
 
@@ -192,6 +197,11 @@ public class OrderController {
 					return "redirect:/cart";
 				}
                 order.setTransactionId(transactionId);
+                
+                // 판매량(salesVolumn) 누적
+                book.setSalesVolume(book.getSalesVolume() + order.getQuantity());
+                bookService.updateSalesVolume(book); // salesVolumn 업데이트
+                
 				orderService.insertOrder(order);
 			}
 		}

@@ -10,13 +10,14 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import model.Book;
+import model.Review;
 @Mapper
 public interface BookMapper {
 
-    @Select("SELECT id, title, author, price, description, image, stock FROM book WHERE id = #{id}")
+    @Select("SELECT id, title, author, price, description, image, stock, sales_volume FROM book WHERE id = #{id}")
     Book selectBookById(int id);
 
-    @Select("SELECT id, title, author, price, description, image, stock FROM book")
+    @Select("SELECT id, title, author, price, description, image, stock, sales_volume FROM book")
     List<Book> selectAllBooks();
 
     @Select("SELECT id, title, author, price, description, image, stock FROM book WHERE title LIKE '%' || #{keyword} || '%' OR author LIKE '%' || #{keyword} || '%'")
@@ -35,4 +36,7 @@ public interface BookMapper {
     
     @Update("UPDATE book SET stock = stock - #{quantity} WHERE id = #{bookId}")
     int updateStock(@Param("bookId") int bookId, @Param("quantity") int quantity);
+    
+    @Update("UPDATE book SET sales_volume = #{salesVolume} WHERE id = #{id}")
+	int updateSalesVolume(Book book);
 }

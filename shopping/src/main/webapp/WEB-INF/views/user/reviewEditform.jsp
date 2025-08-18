@@ -198,9 +198,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-
-
-
 </script>
+
+<c:if test="${not empty scrollToReviewId}">
+	<script>
+	document.addEventListener("DOMContentLoaded", function() {
+	    const el = document.getElementById("review-${scrollToReviewId}");
+	    if (el) {
+	        el.scrollIntoView({ behavior: "smooth", block: "center" });
+	    }
+	});
+	</script>
+</c:if>
+
 </body>
 </html>

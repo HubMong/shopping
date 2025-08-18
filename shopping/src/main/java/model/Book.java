@@ -18,7 +18,7 @@ public class Book {
     private String description;	
     private String image;
     private int stock; 
-    private int salesVolumn;
+    private int salesVolume;
     private Member member;
     private List<Review> reviewList;
 }
