@@ -225,7 +225,16 @@
                   <input type="number" min="3" max="50" step="1" name="limit" class="form-control" value="${paramLimit}">
                 </div>
               </div>
+				
+			  <div class="col-12">
+		          <label class="form-label"></label>
+		          <input type="text" name="title" class="form-control" value="${title}" placeholder="제목">
+		      </div>
 
+			  <div class="col-12">
+		          <label class="form-label"></label>
+		          <input type="text" name="author" class="form-control" value="${author}" placeholder="작가">
+		      </div>			  
               <!-- 기존 키워드 파라미터 유지(차트 클릭 후 돌아올 때 보존 용도) -->
               <input type="hidden" name="keyword" value="${keyword}">
 

@@ -1,6 +1,5 @@
 package controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.servlet.ModelAndView;
 
+import lombok.var;
 import model.Book;
 import model.Member;
 import model.Review;
+import service.AdminService;
 import service.BookService;
 import service.MemberService;
 
@@ -34,6 +36,9 @@ public class BookController {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private AdminService adminService;
 	
 	@GetMapping({"/", "/books"})
 	public String home(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
@@ -81,6 +86,14 @@ public class BookController {
 		model.addAttribute("reviewAverage", reviewAverage);
 		return "user/bookDetail";
 	}
+	
+	@GetMapping("/bestsellers")
+	public String bestsellers(Model model) {
+	    // Top 5 조회 (BookService에 getBestsellers(int) 만들어 두셨죠)
+	    model.addAttribute("bestsellers", bookService.getBestsellers(5));
+	    return "user/bestsellers"; // JSP 경로
+	}
+
 
 	@PostMapping("review/add")
 	public String addReview(@RequestParam("rating") int rating,
@@ -117,6 +130,20 @@ public class BookController {
 	    bookService.save(review);
 	    return "redirect:/books/" + finalBookId;
 	}
+	
+	@GetMapping("/recommended")
+	public String recommended(org.springframework.ui.Model model,
+	                          javax.servlet.http.HttpSession session) {
+	    Member loginUser = (Member) session.getAttribute("loginUser");
+	    model.addAttribute("loginUser", loginUser);
+
+	    java.util.List<Book> top5 = bookService.getRecommendedTopN(5);
+	    model.addAttribute("top1", top5.isEmpty() ? null : top5.get(0));
+	    model.addAttribute("others", top5.size() > 1 ? top5.subList(1, top5.size()) : java.util.Collections.emptyList());
+	    return "user/recommended"; // 추천 전용 JSP
+	}
+
+	
 	@PostMapping("review/delete")
 	public String deleteReview(@RequestParam int id, @RequestParam int bookId) {
 		bookService.deleteById(id);

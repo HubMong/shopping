@@ -55,4 +55,7 @@ public interface ReviewMapper {
 
     @Delete("DELETE FROM review WHERE member_id = #{memberId}")
     int deleteByMemberId(int memberId);
+    
+    @Select("SELECT NVL(AVG(score), 0) FROM review")
+    double selectGlobalAvgScore();
 }

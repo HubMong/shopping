@@ -83,7 +83,7 @@ public class AdminService {
 		adminMapper.delete(id);
 	}
 	
-    public List<StatPoint> getTopBookSales(String startDate, String endDate, int limit) {
-        return orderMapper.selectTopBookSales(startDate, endDate, limit);
+    public List<StatPoint> getTopBookSales(String startDate, String endDate, int limit, String title, String author) {
+        return orderMapper.selectTopBookSales(startDate, endDate, limit, title, author);
     }
 }

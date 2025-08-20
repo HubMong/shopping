@@ -95,4 +95,19 @@ public class BookService {
     public int updateByOwner(Review review) {
         return reviewMapper.updateByOwner(review); // WHERE id AND member_id
     }
+    
+    public List<Book> getBestsellers(int limit) {
+        return reviewMapper == null ? // 그냥 참고: 기존 구조 유지
+            bookMapper.selectBestsellers(limit) :
+            bookMapper.selectBestsellers(limit);
+    }
+
+    public java.util.List<Book> getRecommendedTopN(int n) {
+        double C = reviewMapper.selectGlobalAvgScore(); // 전체 평균 평점
+        int m = 5;                                      // 최소 리뷰수 가중치(5~10 추천)
+        java.util.List<Book> all = bookMapper.selectRecommended(m, C);
+        if (all == null) return java.util.Collections.emptyList();
+        return all.size() > n ? all.subList(0, n) : all;
+    }
+
 }

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import model.Book;
 import model.Member;
 import model.Order;
+import model.Review;
 import service.AdminService;
 import service.BookService;
 import service.MemberService;
@@ -45,7 +46,9 @@ public class AdminController {
 	        // [ADDED] 판매량 Top N 차트용 필터
 	        @RequestParam(value = "startDate", required = false) String startDate, // yyyy-MM-dd
 	        @RequestParam(value = "endDate",   required = false) String endDate,   // yyyy-MM-dd
-	        @RequestParam(value = "limit",     required = false, defaultValue = "10") int limit // Top N
+	        @RequestParam(value = "limit",     required = false, defaultValue = "10") int limit, // Top N
+	        @RequestParam(value = "title", required=false) String title,
+	        @RequestParam(value = "author", required=false) String author
 	) {
 	    if (keyword == null || keyword.trim().isEmpty()) {
 	        mv.addObject("books", adminservice.getBookList());
@@ -56,12 +59,12 @@ public class AdminController {
 
 	    // [ADDED] 인기 도서 Top-N (기간 필터 적용)
 	    mv.addObject("bookSalesStats",
-	        adminservice.getTopBookSales(startDate, endDate, limit)); 
+	        adminservice.getTopBookSales(startDate, endDate, limit, title, author)); 
 
 	    // [ADDED] 입력값 유지
 	    mv.addObject("paramStartDate", startDate == null ? "" : startDate);
 	    mv.addObject("paramEndDate",   endDate   == null ? "" : endDate);
-	    mv.addObject("paramLimit",     limit);
+	    mv.addObject("paramLimit",     limit == 0 ? "" : limit);
 
 	    mv.setViewName("admin/adminbooklist");
 	    mv.addObject("page", "books");
@@ -91,15 +94,34 @@ public class AdminController {
 
 	@GetMapping("books/detail")
 	public ModelAndView showBookDetail(ModelAndView mv, @RequestParam("id") int id) {
-	    // 책 정보를 조회
 	    Book book = adminservice.getBook(id);
-	    
-	    // 책 정보를 모델에 추가
 	    mv.addObject("book", book);
-	    
-	    // 책 상세보기 페이지로 이동
-	    mv.setViewName("admin/adminbookdetail");  // 이 페이지로 이동해야 책 상세 정보를 볼 수 있습니다.
+
+	    // [ADDED] 이 책의 리뷰 조회
+	    List<Review> reviewList = bookservice.getReviewsByBook(id);
+	    // [ADDED] 작성자 정보 주입 (JSP에서 review.member.name 사용)
+	    for (Review r : reviewList) {
+	        Member m = memberservice.selectById(r.getMemberId());
+	        r.setMember(m);
+	    }
+	    mv.addObject("reviewList", reviewList);
+
+	    // (선택) 통계가 필요하면 같이 내려주기
+	    int reviewCount = bookservice.getCountByBookId(id);
+	    int reviewSum   = bookservice.getSumByBookId(id);
+	    float reviewAvg = (reviewCount > 0) ? (float)reviewSum / reviewCount : 0f;
+	    mv.addObject("reviewCount", reviewCount);
+	    mv.addObject("reviewAverage", reviewAvg);
+
+	    mv.setViewName("admin/adminbookdetail");
 	    return mv;
+	}
+	
+	@PostMapping("reviews/delete")
+	public String adminDeleteReview(@RequestParam("id") int id,
+	                                @RequestParam("bookId") int bookId) {
+	    bookservice.deleteById(id); // 관리자: 소유자 체크 없이 삭제
+	    return "redirect:/admin/books/detail?id=" + bookId;
 	}
 
     @GetMapping("books/edit")

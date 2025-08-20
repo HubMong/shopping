@@ -209,29 +209,40 @@ public interface OrderMapper {
     
     // [ADDED] 인기 도서 Top-N (기간 필터)
     @Select({
-      "<script>",
-      "SELECT * FROM (",
-      "  SELECT",
-      "    MAX(b.title) AS label,",
-      "    SUM(o.quantity) AS count",
-      "  FROM ORDERS o",
-      "  JOIN BOOK b ON b.id = o.book_id",
-      "  <where>",
-      "    <if test='startDate != null and startDate.trim() != \"\"'>",
-      "      AND o.order_date &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')",
-      "    </if>",
-      "    <if test='endDate != null and endDate.trim() != \"\"'>",
-      "      AND o.order_date &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1",
-      "    </if>",
-      "  </where>",
-      "  GROUP BY b.id",
-      "  ORDER BY SUM(o.quantity) DESC",
-      ") WHERE ROWNUM &lt;= #{limit}",
-      "</script>"
+    	  "<script>",
+    	  "SELECT * FROM (",
+    	  "  SELECT",
+    	  "    MAX(b.title) AS label,",
+    	  "    SUM(o.quantity) AS count",
+    	  "  FROM ORDERS o",
+    	  "  JOIN BOOK b ON b.id = o.book_id",
+    	  "  <where>",
+    	  "    <if test='startDate != null and startDate.trim() != \"\"'>",
+    	  "      AND o.order_date &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')",
+    	  "    </if>",
+    	  "    <if test='endDate != null and endDate.trim() != \"\"'>",
+    	  "      AND o.order_date &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1",
+    	  "    </if>",
+    	  "    <if test='title != null and title.trim() != \"\"'>",
+    	  "      AND LOWER(b.title) LIKE '%' || LOWER(#{title}) || '%'",
+    	  "    </if>",
+    	  "    <if test='author != null and author.trim() != \"\"'>",
+    	  "      AND LOWER(b.author) LIKE '%' || LOWER(#{author}) || '%'",
+    	  "    </if>",
+    	  "  </where>",
+    	  "  GROUP BY b.id",
+    	  "  ORDER BY SUM(o.quantity) DESC",
+    	  ")",
+    	  "<if test='limit != null and limit &gt; 0'>",
+    	  " WHERE ROWNUM &lt;= #{limit}",
+    	  "</if>",
+    	  "</script>"
     })
     List<StatPoint> selectTopBookSales(
         @Param("startDate") String startDate,
         @Param("endDate")   String endDate,
-        @Param("limit")     int limit
+        @Param("limit")     int limit,
+        @Param("title")		String title,
+        @Param("author")	String author
     );
 }

@@ -42,9 +42,8 @@
     <div class="nav-container">
         <ul class="category-menu">
             <li class="active"><a href="${pageContext.request.contextPath}/books">도서</a></li>
-            <li><a href="#">베스트셀러</a></li>
-            <li><a href="#">신간</a></li>
-            <li><a href="#">이벤트</a></li>
+            <li><a href="${pageContext.request.contextPath}/bestsellers">베스트셀러</a></li>
+            <li><a href="${pageContext.request.contextPath}/recommended">추천</a></li>
             <c:if test="${sessionScope.loginUser.role == 'ADMIN'}">
 		        <li class="admin-menu">
 		            <a href="#">관리자 페이지 ▼</a>

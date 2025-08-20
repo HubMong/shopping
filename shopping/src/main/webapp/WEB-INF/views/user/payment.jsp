@@ -117,5 +117,22 @@
             </form>
         </div>
     </div>
+    
+    <script>
+         // '결제하기' 버튼 클릭 여부를 추적하는 플래그
+         let isCompletingPayment = false;
+    
+         document.querySelector('.btn-payment').addEventListener('click', function() {
+             // '결제하기' 버튼을 누르면 플래그를 true로 설정
+             isCompletingPayment = true;
+         });
+   
+        window.addEventListener('beforeunload', function(event) {
+            // '결제하기' 버튼을 통한 정상적인 제출이 아닐 경우에만 세션 정리 요청
+            if (!isCompletingPayment) {
+                navigator.sendBeacon('<c:url value="/orders/cancel"/>');
+            }
+        });
+        </script>
 </body>
 </html>

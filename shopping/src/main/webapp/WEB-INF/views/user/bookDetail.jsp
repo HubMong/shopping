@@ -9,10 +9,20 @@
   <title>책 상세페이지</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bookDetail.css">
   <style>
-    /* [ADDED] 인라인 편집 보조 스타일 */
+    /* 인라인 편집 보조 스타일 */
     .edit-comment { display:none; width:100%; box-sizing:border-box; }
     .review-item.editing .comment-content { display:none; }
     .review-item.editing .edit-comment { display:inline-block; }
+
+    /* 보기/편집 별 토글 */
+    .review-stars-view { color:#e53935; }              /* 보기용 별 - 빨간색 */
+    .review-stars-edit { display:none; user-select:none; }
+    .review-item.editing .review-stars-view { display:none; }
+    .review-item.editing .review-stars-edit { display:inline-block; cursor:pointer; }
+
+    /* 편집용 별 모양 */
+    .review-stars-edit .star { font-size:1.05rem; color:#cccccc; padding:0 2px; }
+    .review-stars-edit .star.filled { color:#e53935; } /* 선택/하이라이트 시 빨간색 */
   </style>
   <!-- (선택) Spring Security CSRF 사용 중이면 meta 추가
   <meta name="_csrf" content="${_csrf.token}">
@@ -21,11 +31,11 @@
 </head>
 <body>
 	<a href="${pageContext.request.contextPath}/books" class="back-button-fixed">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-    </a>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+  </a>
     
   <c:if test="${book == null}">
     <script>
@@ -78,18 +88,15 @@
   
   <div class="book-description">
 	  <h2>책 내용</h2>
-	  <p class="description">${book.description}</p>
+	  <p class="description"><c:out value="${book.description}"/></p>
   </div>
  
 <div class="review-container">
-  <div>
-  	<h2>리뷰(${reviewCount})</h2>
-  </div>
+  <div><h2>리뷰(${reviewCount})</h2></div>
 	
 <c:if test="${not empty loginUser}">
   <div class="review-form">
       <form action="${pageContext.request.contextPath}/review/add" method="post">
-          <!-- [CHANGED] name="id" -> name="bookId" -->
 	  	  <input type="hidden" name="bookId" value="${book.id}">
           <div class="form-group">
 			  <label>별점</label>
@@ -114,30 +121,35 @@
  
 <div class="review-list">
   <c:forEach var="review" items="${reviewList}">
-  <!-- [ADDED] data-id (리뷰 PK) -->
-  <div class="review-item" id="review-${review.id}" data-id="${review.id}">
+  <!-- data-id: 리뷰 PK, data-score: 현재 점수 -->
+  <div class="review-item" id="review-${review.id}" data-id="${review.id}" data-score="${review.score}">
     <div class="review-header">
-        <div class="review-stars">
-            <c:forEach begin="1" end="${review.score}">★</c:forEach>
-            <c:forEach begin="1" end="${5 - review.score}">☆</c:forEach>
+        <!-- 보기용 별 (빨간색) -->
+        <div class="review-stars-view">
+          <c:forEach begin="1" end="${review.score}">★</c:forEach>
+          <c:forEach begin="1" end="${5 - review.score}">☆</c:forEach>
+        </div>
+        <!-- 편집용 별 (처음엔 숨김) -->
+        <div class="review-stars-edit">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
         </div>
 
         <c:if test="${not empty loginUser and loginUser.id == review.member.id}">
-            <div class="review-actions">
-                <!-- [REMOVED] /review/edit 폼 -->
-                <!-- [ADDED] 순수 버튼 -->
-                <button type="button" class="btn-edit">수정</button>
-                
-                <form action="${pageContext.request.contextPath}/review/delete" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                    <input type="hidden" name="bookId" value="${book.id}">
-                    <input type="hidden" name="id" value="${review.id}">
-                    <button type="submit" class="btn-delete">삭제</button>
-                </form>
-            </div>
+          <div class="review-actions">
+            <button type="button" class="btn-edit">수정</button>
+            <form action="${pageContext.request.contextPath}/review/delete" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+              <input type="hidden" name="bookId" value="${book.id}">
+              <input type="hidden" name="id" value="${review.id}">
+              <button type="submit" class="btn-delete">삭제</button>
+            </form>
+          </div>
         </c:if>
     </div>
 
-	<!-- [CHANGED] 안전출력 + 인라인 입력 추가 -->
 	<div class="review-body">
 	  <span class="comment-content"><c:out value="${review.content}"/></span>
 	  <input type="text" class="edit-comment" value="<c:out value='${review.content}'/>">
@@ -150,7 +162,6 @@
   </c:forEach>
 </div>
 
- 
   <a href="${pageContext.request.contextPath}/books" class="back-button">목록으로</a>
   </c:if>
 
@@ -175,7 +186,7 @@
     <script>alert("${successMsg}");</script>
 </c:if>
 
-<!-- 별점 위젯 -->
+<!-- 등록 폼 별점 위젯 -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const stars = document.querySelectorAll('.star-rating span');
@@ -209,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- [ADDED] 인라인 수정: 수정→입력→Enter/수정완료 저장(AJAX) -->
+<!-- 인라인 수정: 내용+별점 저장(AJAX) -->
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   const ctx = '${pageContext.request.contextPath}';
@@ -219,9 +230,46 @@ document.addEventListener('DOMContentLoaded', function(){
   const csrfToken  = (document.querySelector('meta[name="_csrf"]') || {}).content;
   const csrfHeader = (document.querySelector('meta[name="_csrf_header"]') || {}).content;
 
-  // 혹시 남아있는 /review/edit 폼이 있으면 경고
-  const leftovers = document.querySelectorAll('form[action*="/review/edit"]');
-  if (leftovers.length) console.warn('review/edit 폼이 남아있습니다. 제거하세요:', leftovers.length);
+  // 보기용 별 갱신
+  function renderViewStars(container, score){
+    const s = Math.max(0, Math.min(5, parseInt(score,10) || 0));
+    const filled = '★'.repeat(s);
+    const empty  = '☆'.repeat(5 - s);
+    container.textContent = filled + empty;
+  }
+
+  // 편집용 별 하이라이트
+  function highlightEditStars(editBox, value){
+    editBox.querySelectorAll('.star').forEach(st => {
+      const v = parseInt(st.getAttribute('data-value'), 10);
+      st.classList.toggle('filled', v <= value);
+    });
+  }
+
+  // 편집용 별 바인딩
+  function bindStarEditor(item){
+    const editBox = item.querySelector('.review-stars-edit');
+    if (!editBox) return;
+    const now = parseInt(item.dataset.score || '0', 10) || 0;
+    item.dataset.editScore = now;
+    highlightEditStars(editBox, now);
+
+    editBox.onmousemove = function(e){
+      const star = e.target.closest('.star');
+      if (!star) return;
+      highlightEditStars(editBox, parseInt(star.dataset.value,10));
+    };
+    editBox.onmouseleave = function(){
+      highlightEditStars(editBox, parseInt(item.dataset.editScore||'0',10));
+    };
+    editBox.onclick = function(e){
+      const star = e.target.closest('.star');
+      if (!star) return;
+      const val = parseInt(star.dataset.value,10);
+      item.dataset.editScore = val;
+      highlightEditStars(editBox, val);
+    };
+  }
 
   list && list.addEventListener('click', function(e){
     const btn = e.target.closest('.btn-edit');
@@ -232,21 +280,33 @@ document.addEventListener('DOMContentLoaded', function(){
     const input = item.querySelector('.edit-comment');
     const id    = item.dataset.id;
 
-    // 편집 중이면 저장
+    // 저장
     if (item.classList.contains('editing')) {
-      const newText = (input.value || '').trim();
+      const newText  = (input.value || '').trim();
+      const newScore = parseInt(item.dataset.editScore || item.dataset.score || '0', 10) || 0;
       if (!newText) { alert('내용을 입력하세요.'); return; }
+      if (!(newScore >= 1 && newScore <= 5)) { alert('별점을 선택하세요.'); return; }
 
       const xhr = new XMLHttpRequest();
       xhr.open('POST', ctx + '/review/update.json', true);
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
       if (csrfToken && csrfHeader) xhr.setRequestHeader(csrfHeader, csrfToken);
 
+      const payload = 'id=' + encodeURIComponent(id)
+                    + '&content=' + encodeURIComponent(newText)
+                    + '&score=' + encodeURIComponent(newScore);
+
       xhr.onload = function(){
         let res = {};
         try { res = JSON.parse(xhr.responseText || '{}'); } catch(_) {}
         if (xhr.status === 200 && res.ok) {
+          // 내용/별점 뷰 갱신
           span.textContent = newText;
+          const viewStars = item.querySelector('.review-stars-view');
+          if (viewStars) renderViewStars(viewStars, newScore);
+          item.dataset.score = String(newScore);
+
+          // 편집 종료
           item.classList.remove('editing');
           btn.textContent = '수정';
         } else {
@@ -254,8 +314,7 @@ document.addEventListener('DOMContentLoaded', function(){
         }
       };
       xhr.onerror = function(){ alert('네트워크 오류'); };
-
-      xhr.send('id=' + encodeURIComponent(id) + '&content=' + encodeURIComponent(newText));
+      xhr.send(payload);
       return;
     }
 
@@ -263,10 +322,12 @@ document.addEventListener('DOMContentLoaded', function(){
     input.value = span.textContent.trim();
     item.classList.add('editing');
     btn.textContent = '수정 완료';
+    bindStarEditor(item);
+
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
 
-    // Enter=저장 / Esc=취소
+    // Enter 저장 / Esc 취소
     const keyHandler = function(ev){
       if (ev.key === 'Enter') { btn.click(); }
       if (ev.key === 'Escape') {
@@ -276,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function(){
       }
     };
     input.addEventListener('keydown', keyHandler);
-  }, true); // 캡처로 다른 핸들러보다 먼저 잡음
+  }, true);
 });
 </script>
 

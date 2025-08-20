@@ -213,4 +213,10 @@ public class OrderController {
 		redirectAttributes.addFlashAttribute("successMsg", "결제 되었습니다.");
 		return "redirect:/orders/member/orderlist";
 	}
+	
+	 @PostMapping("/cancel")
+     public void cancelOrder(HttpSession session) {
+        session.removeAttribute("order");
+        session.removeAttribute("orders");
+     }
 }

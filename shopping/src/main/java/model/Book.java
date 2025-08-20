@@ -21,4 +21,8 @@ public class Book {
     private int salesVolume;
     private Member member;
     private List<Review> reviewList;
+    
+    private int reviewCount;       // v
+    private double avgScore;       // R
+    private double weightedScore;  // WR = 가중평점
 }
