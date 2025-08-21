@@ -13,7 +13,7 @@ import model.StatPoint;
 
 public interface OrderMapper {
 
-    @Select("SELECT * FROM ORDERS WHERE member_id = #{memberId}")
+    @Select("SELECT * FROM ORDERS WHERE member_id = #{memberId} ORDER BY order_date DESC")
     public List<Order> selectByMemberId(int memberId);
 
     @Select("SELECT * FROM ORDERS ORDER BY order_date desc")
