@@ -233,7 +233,7 @@ public interface OrderMapper {
     	  "  GROUP BY b.id",
     	  "  ORDER BY SUM(o.quantity) DESC",
     	  ")",
-    	  "<if test='limit != null and limit &gt; 0'>",
+    	  "<if test='limit != null and limit > 0'>",
     	  " WHERE ROWNUM &lt;= #{limit}",
     	  "</if>",
     	  "</script>"
@@ -241,8 +241,8 @@ public interface OrderMapper {
     List<StatPoint> selectTopBookSales(
         @Param("startDate") String startDate,
         @Param("endDate")   String endDate,
-        @Param("limit")     int limit,
-        @Param("title")		String title,
-        @Param("author")	String author
+        @Param("limit")     Integer limit,
+        @Param("title")     String title,
+        @Param("author")    String author
     );
 }

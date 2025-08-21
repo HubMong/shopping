@@ -62,7 +62,7 @@
     <div class="right-menu">
             <a href="#">회원혜택</a>
             <a href="${pageContext.request.contextPath}/member/info">회원정보</a>
-            <a href="${pageContext.request.contextPath}/orders/member/${loginUser.id}">주문내역</a>
+            <a href="${pageContext.request.contextPath}/orders/member/orderlist">주문내역</a>
             <a href="${pageContext.request.contextPath}/faq">고객센터</a>
         </div>
   </div>

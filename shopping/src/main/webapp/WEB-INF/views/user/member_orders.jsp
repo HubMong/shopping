@@ -63,7 +63,6 @@
                 </c:forEach>
             </c:otherwise>
         </c:choose>
-        <a href="${pageContext.request.contextPath}/books" class="btn-back">← 쇼핑 계속하기</a>
     </div>
 </body>
 </html>

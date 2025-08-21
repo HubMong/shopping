@@ -32,7 +32,24 @@ public interface AdminMapper {
 	public void update(Book book);
 	
 	@Delete("delete from book where id=#{id}")
-	public void delete(int id);	
+	public void delete(int id);
+
+	@Select({
+	  "<script>",
+	  "SELECT * FROM book",
+	  "WHERE 1=1",
+	  "  <if test='title != null and title.trim() != \"\"'>",
+	  "    AND LOWER(title) LIKE '%' || LOWER(#{title}) || '%'",
+	  "  </if>",
+	  "  <if test='author != null and author.trim() != \"\"'>",
+	  "    AND LOWER(author) LIKE '%' || LOWER(#{author}) || '%'",
+	  "  </if>",
+	  "</script>"
+	})
+	List<Book> searchBooksByTitleAuthor(
+	    @Param("title") String title,
+	    @Param("author") String author
+	);
 	
 	
 }

@@ -46,15 +46,19 @@ public class AdminController {
 	        // [ADDED] 판매량 Top N 차트용 필터
 	        @RequestParam(value = "startDate", required = false) String startDate, // yyyy-MM-dd
 	        @RequestParam(value = "endDate",   required = false) String endDate,   // yyyy-MM-dd
-	        @RequestParam(value = "limit",     required = false, defaultValue = "10") int limit, // Top N
+	        @RequestParam(value = "limit",     required = false) Integer limit, // Top N
 	        @RequestParam(value = "title", required=false) String title,
 	        @RequestParam(value = "author", required=false) String author
 	) {
-	    if (keyword == null || keyword.trim().isEmpty()) {
-	        mv.addObject("books", adminservice.getBookList());
+	    List<Book> books;
+	    if ((title != null && !title.trim().isEmpty()) || (author != null && !author.trim().isEmpty())) {
+	        books = adminservice.searchBooksByTitleAuthor(title, author);
+	    } else if (keyword != null && !keyword.trim().isEmpty()) {
+	        books = adminservice.searchBooks(keyword);
 	    } else {
-	        mv.addObject("books", adminservice.searchBooks(keyword));
+	        books = adminservice.getBookList();
 	    }
+	    mv.addObject("books", books);
 	    mv.addObject("keyword", keyword);
 
 	    // [ADDED] 인기 도서 Top-N (기간 필터 적용)
@@ -64,8 +68,16 @@ public class AdminController {
 	    // [ADDED] 입력값 유지
 	    mv.addObject("paramStartDate", startDate == null ? "" : startDate);
 	    mv.addObject("paramEndDate",   endDate   == null ? "" : endDate);
-	    mv.addObject("paramLimit",     limit == 0 ? "" : limit);
-
+	    mv.addObject("title", title);
+	    mv.addObject("author", author);
+	    
+	    if (limit == null) {
+	        // 전체 결과 조회
+	        mv.addObject("paramLimit", "");
+	    } else {
+	        // Top N 조회
+	        mv.addObject("paramLimit", limit);
+	    }
 	    mv.setViewName("admin/adminbooklist");
 	    mv.addObject("page", "books");
 	    return mv;
