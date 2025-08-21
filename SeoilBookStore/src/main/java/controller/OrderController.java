@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,7 +45,12 @@ public class OrderController {
             return "redirect:/member/loginform";
         }
 		List<Order> orderList = orderService.getOrdersByMemberId(loginUser.getId());
-		Map<String, List<Order>> groupedOrders = orderList.stream().collect(Collectors.groupingBy(Order::getTransactionId));
+		Map<String, List<Order>> groupedOrders = orderList.stream()
+			    .collect(Collectors.groupingBy(
+			        Order::getTransactionId,
+			        LinkedHashMap::new,
+			        Collectors.toList()
+			    )); // 주문을 최신순으로 정렬하기 위함.
 		model.addAttribute("groupedOrders", groupedOrders);
 		return "user/member_orders"; // → /WEB-INF/views/order/member_orders.jsp
 	}
