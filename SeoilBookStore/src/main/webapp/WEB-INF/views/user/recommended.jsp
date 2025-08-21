@@ -13,244 +13,145 @@
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/resources/css/list.css">
 <style>
+    /* 히어로 (#1) 강조 */
+    .best-hero{
+        display: grid;
+        grid-template-columns: 280px 1fr; /* 이미지와 정보 컬럼 */
+        gap: 30px;
+        align-items: center; /* 세로 중앙 정렬로 변경 */
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.06);
+        padding: 24px;
+        position: relative; /* 자식 요소 absolute 포지셔닝 기준 */
+        margin-bottom: 28px;
+    }
+    .best-hero .badge{
+        position:absolute;
+        top: -10px;
+        left: -10px;
+        background:linear-gradient(135deg,#ff6b6b,#ff8e53);
+        color:#fff;
+        font-weight:700;
+        border-radius:12px;
+        padding:8px 14px;
+        box-shadow:0 6px 18px rgba(255,107,107,.35);
+        z-index: 2;
+    }
+    .best-hero .cover {
+        width: 280px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #f8f8f8;
+    }
+    .best-hero .cover img{width:100%;height:auto;display:block}
+    
+    /* 정보 섹션 */
+    .best-hero .detail { padding-right: 150px; } /* 버튼과 겹치지 않게 패딩 추가 */
+    .best-hero .detail h2{margin: 0 0 12px; font-size:28px; line-height:1.3;}
+    .best-hero .detail .author{color:#666; margin-bottom:16px; font-size: 16px;}
+    
+    .best-hero .detail .meta{display:flex; gap:20px; align-items:center; margin-bottom:16px;}
+    .best-hero .detail .price{font-size:22px;font-weight:700}
+    .best-hero .detail .review{font-size:15px;color:#888}
+    .best-hero .detail .review .stars{color: #e53935;}
+    
+    .best-hero .detail .description {
+        color: #555;
+        font-size: 15px;
+        line-height: 1.7;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        margin-bottom: 20px; /* 상세보기 버튼과의 간격 */
+    }
 
-/* ✅ 상세보기(CTA) 버튼 스타일 추가 */
-.best-hero .cta {
-	margin-top: 14px;
-	display: flex;
-	gap: 10px
-}
+    /* 상세보기 버튼 추가 */
+    .best-hero .detail .detail-button-container {
+        margin-top: auto; /* 맨 아래로 밀기 */
+    }
+    .best-hero .detail .detail-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        background: #343a40;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+    .best-hero .detail .detail-button:hover {
+        background: #23272b;
+    }
 
-.best-hero .cta .detail {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	padding: 10px 14px;
-	border-radius: 10px;
-	background: #111;
-	color: #fff;
-	text-decoration: none
-}
+    /* 버튼 컨테이너 - 제목과 y축을 맞추기 위해 transform 조정 */
+    .best-hero .cta {
+        position: absolute;
+        top: 50%;
+        right: 24px; 
+        transform: translateY(-100%); /* 제목 위치에 근사하도록 조정 */
+        display: flex;
+        flex-direction: column; 
+        gap: 10px;
+        z-index: 1;
+    }
 
-.best-hero .cta .detail:hover {
-	opacity: .9
-}
+    .best-hero .cta button {
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 1.5px solid #007bff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap; 
+    }
 
-/* (선택) 2~5 카드에도 버튼 넣을 때 사용 */
-.bests-card .cta {
-	margin-top: 10px
-}
+    .best-hero .cta .cart {
+        background-color: #fff;
+        color: #007bff;
+    }
+    .best-hero .cta .cart:hover { background-color: #f0f8ff; }
 
-.bests-card .cta a {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 8px 12px;
-	border-radius: 10px;
-	background: #111;
-	color: #fff;
-	text-decoration: none
-}
+    .best-hero .cta .buy-now {
+        background-color: #007bff;
+        color: #fff;
+    }
+    .best-hero .cta .buy-now:hover { background-color: #0056b3; }
 
-.bests-card .cta a:hover {
-	opacity: .9
-}
 
-/* 히어로 (#1) 강조 - 베스트셀러 페이지와 톤 맞춤 */
-.best-hero {
-	display: grid;
-	grid-template-columns: 280px 1fr;
-	gap: 24px;
-	align-items: center;
-	background: #fff;
-	border-radius: 14px;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
-	padding: 20px;
-	position: relative;
-	margin-bottom: 28px
-}
+    /* 랭크 배지 */
+    .rank-badge{position:absolute;top:10px;left:10px;background:linear-gradient(135deg,#ff6b6b,#ff8e53);color:#fff;font-weight:700;border-radius:10px;
+padding:6px 10px;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 
-.best-hero .badge {
-	position: absolute;
-	top: -10px;
-	left: -10px;
-	background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-	color: #fff;
-	font-weight: 700;
-	border-radius: 12px;
-	padding: 8px 14px;
-	box-shadow: 0 6px 18px rgba(255, 107, 107, .35)
-}
+    /* 그리드 (#2~#5) */
+    .bests-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+    .bests-card{position:relative;background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.05);
+overflow:hidden;transition:transform .15s ease, box-shadow .15s ease}
+    .bests-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.08)}
+    .bests-card .thumb{aspect-ratio:3/4;display:block;background:#f6f6f6}
+    .bests-card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .bests-card .info{padding:12px}
+    .bests-card .title{font-weight:700;height:44px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .bests-card .author{color:#666;margin:6px 0 8px}
+    .bests-card .foot{display:flex;justify-content:space-between;align-items:center}
+    .bests-card .price{font-weight:800}
+    .bests-card .review{color:#999;font-size:12px}
+    .bests-card .review .stars{color:#e53935; margin-right: 4px;}
 
-.best-hero .cover {
-	border-radius: 12px;
-	overflow: hidden;
-	background: #f8f8f8
-}
+    /* 페이지 타이틀 */
+    .page-title{display:flex;align-items:center;gap:12px;margin:18px 0}
+    .page-title h1{margin:0;font-size:24px}
+    .page-title .sub{color:#888}
 
-.best-hero .cover img {
-	width: 100%;
-	height: auto;
-	display: block
-}
-
-.best-hero h2 {
-	margin: 0 0 8px;
-	font-size: 28px;
-	line-height: 1.25
-}
-
-.best-hero .author {
-	color: #666;
-	margin-bottom: 10px
-}
-
-.best-hero .meta {
-	display: flex;
-	gap: 16px;
-	align-items: center;
-	margin-top: 12px
-}
-
-.best-hero .price {
-	font-size: 20px;
-	font-weight: 700
-}
-
-.best-hero .review {
-	font-size: 14px;
-	color: #888
-}
-
-.best-hero .stars {
-	color: #e53935;
-	margin-right: 6px
-} /* 빨간 별 */
-
-/* 랭크 배지 */
-.rank-badge {
-	position: absolute;
-	top: 10px;
-	left: 10px;
-	background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-	color: #fff;
-	font-weight: 700;
-	border-radius: 10px;
-	padding: 6px 10px;
-	font-size: 12px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, .15)
-}
-
-/* 그리드 (#2~#5) */
-.bests-grid {
-	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: 18px
-}
-
-.bests-card {
-	position: relative;
-	background: #fff;
-	border-radius: 12px;
-	box-shadow: 0 6px 18px rgba(0, 0, 0, .05);
-	overflow: hidden;
-	transition: transform .15s ease, box-shadow .15s ease
-}
-
-.bests-card:hover {
-	transform: translateY(-3px);
-	box-shadow: 0 10px 26px rgba(0, 0, 0, .08)
-}
-
-.bests-card .thumb {
-	aspect-ratio: 3/4;
-	display: block;
-	background: #f6f6f6
-}
-
-.bests-card .thumb img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	display: block
-}
-
-.bests-card .info {
-	padding: 12px
-}
-
-.bests-card .title {
-	font-weight: 700;
-	height: 44px;
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical
-}
-
-.bests-card .author {
-	color: #666;
-	margin: 6px 0 8px
-}
-
-.bests-card .foot {
-	display: flex;
-	justify-content: space-between;
-	align-items: center
-}
-
-.bests-card .price {
-	font-weight: 800
-}
-
-.bests-card .review {
-	color: #999;
-	font-size: 12px
-}
-
-.bests-card .stars {
-	color: #e53935;
-	margin-right: 4px
-}
-
-/* 페이지 타이틀 */
-.page-title {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	margin: 18px 0
-}
-
-.page-title h1 {
-	margin: 0;
-	font-size: 24px
-}
-
-.page-title .sub {
-	color: #888
-}
-
-@media ( max-width :1100px) {
-	.bests-grid {
-		grid-template-columns: repeat(3, 1fr)
-	}
-}
-
-@media ( max-width :820px) {
-	.best-hero {
-		grid-template-columns: 1fr
-	}
-	.bests-grid {
-		grid-template-columns: repeat(2, 1fr)
-	}
-}
-
-@media ( max-width :560px) {
-	.bests-grid {
-		grid-template-columns: 1fr
-	}
-}
-</style>
+    @media (max-width:1100px){.bests-grid{grid-template-columns:repeat(3,1fr)}}
+    @media (max-width:820px){.best-hero{grid-template-columns:1fr; align-items: flex-start;}.best-hero .detail {padding-right: 0;}.best-hero .cta {position: static; transform: none; flex-direction: row; width: 100%; margin-top: 20px;}}
+    @media (max-width:560px){.bests-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 
 <body>
@@ -335,37 +236,41 @@
 		<!-- TOP 1 (히어로) -->
 		<c:if test="${not empty top1}">
 			<div class="best-hero">
-				<div class="badge">서일문고 Best Review 1</div>
-				<div class="cover">
-					<a href="${pageContext.request.contextPath}/books/${top1.id}">
-						<img
-						src="${pageContext.request.contextPath}/resources/images/${top1.image}"
-						alt="${top1.title}"
-						onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/resources/images/default_cover.jpg';">
+			  <div class="badge">서일문고 Best Review 1</div>
+			  <a href="${pageContext.request.contextPath}/books/${top1.id}" class="cover">
+				<img src="${pageContext.request.contextPath}/resources/images/${top1.image}"
+					 alt="${top1.title}"
+					 onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/resources/images/default_cover.jpg';">
+			  </a>
+			  <div class="detail">
+				<h2>${top1.title}</h2>
+				<div class="author">${top1.author}</div>
+				<div class="meta">
+				  <div class="price"><fmt:formatNumber value="${top1.price}" pattern="#,###"/>원</div>
+				  <div class="review">
+					<span class="stars">★</span> 
+					<strong><fmt:formatNumber value="${empty top1.avgScore ? 0 : top1.avgScore}" pattern="0.0"/></strong>
+					(${empty top1.reviewCount ? 0 : top1.reviewCount}개)
+				  </div>
+				</div>
+				<div class="description">${top1.description}</div>
+				<div class="detail-button-container">
+					<a class="detail-button" href="${pageContext.request.contextPath}/books/${top1.id}">
+						<i class="fas fa-book-open"></i> 상세보기
 					</a>
 				</div>
-				<div class="detail">
-					<h2>${top1.title}</h2>
-					<div class="author">${top1.author}</div>
-					<div class="meta">
-						<div class="price">
-							<fmt:formatNumber value="${top1.price}" pattern="#,###" />
-							원
-						</div>
-						<div class="review">
-							<span class="stars">★</span> 평균
-							<fmt:formatNumber
-								value="${empty top1.avgScore ? 0 : top1.avgScore}" pattern="0.0" />
-							· 리뷰 ${empty top1.reviewCount ? 0 : top1.reviewCount}개
-						</div>
-					</div>
-					<div class="cta">
-						<a class="detail"
-							href="${pageContext.request.contextPath}/books/${top1.id}"> <i
-							class="fas fa-book-open"></i> 상세보기
-						</a>
-					</div>
-				</div>
+			  </div>
+			  <div class="cta">
+				  <form action="${pageContext.request.contextPath}/cart/add" method="post">
+					  <input type="hidden" name="bookId" value="${top1.id}">
+					  <button type="submit" class="cart">장바구니</button>
+				  </form>
+				  <form action="${pageContext.request.contextPath}/orders/buyNow" method="post">
+					  <input type="hidden" name="bookId" value="${top1.id}">
+					  <input type="hidden" name="quantity" value="1">
+					  <button type="submit" class="buy-now">바로구매</button>
+				  </form>
+			  </div>
 			</div>
 		</c:if>
 
