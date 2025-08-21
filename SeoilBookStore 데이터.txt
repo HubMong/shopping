@@ -1,0 +1,46 @@
+DECLARE
+  v_member_id MEMBER.ID%TYPE;
+  v_book_id   BOOK.ID%TYPE;
+  v_order_id  NUMBER;
+  v_start     DATE;
+  v_end       DATE;
+  v_per_year  PLS_INTEGER := 10;  -- ← 연도별 생성 건수 (원하면 조정)
+BEGIN
+  -- 2023, 2024 두 해에 대해 반복
+  FOR yr IN 2023..2024 LOOP
+    v_start := TO_DATE(yr || '-01-01', 'YYYY-MM-DD');  -- 해당 연도 시작일(포함)
+    v_end   := ADD_MONTHS(v_start, 12);                -- 다음 해 1월 1일(배타)
+
+    FOR i IN 1..v_per_year LOOP
+      -- 실제 존재하는 회원 1명 랜덤 선택
+      SELECT id INTO v_member_id
+        FROM (SELECT id FROM MEMBER ORDER BY DBMS_RANDOM.VALUE)
+       WHERE ROWNUM = 1;
+
+      -- 실제 존재하는 도서 1권 랜덤 선택
+      SELECT id INTO v_book_id
+        FROM (SELECT id FROM BOOK ORDER BY DBMS_RANDOM.VALUE)
+       WHERE ROWNUM = 1;
+
+      -- 미리 주문 id 시퀀스 뽑기(트랜잭션ID에 같이 쓰기 위해)
+      SELECT ORDERS_SEQ.NEXTVAL INTO v_order_id FROM DUAL;
+
+      INSERT INTO ORDERS (
+        id, member_id, book_id, quantity, total_price, order_date, transaction_id
+      ) VALUES (
+        v_order_id,
+        v_member_id,
+        v_book_id,
+        TRUNC(DBMS_RANDOM.VALUE(1, 5)),            -- 수량 1~4
+        TRUNC(DBMS_RANDOM.VALUE(10000, 50000)),    -- 금액 10,000 ~ 50,000
+        -- 연도 내 임의의 날짜/시간
+        v_start + DBMS_RANDOM.VALUE(0, v_end - v_start),
+        -- 거의 유니크한 거래ID(연도 + 시퀀스 + 랜덤 4자리)
+        'TX-' || yr || '-' || LPAD(v_order_id, 8, '0') || '-' ||
+        LPAD(TRUNC(DBMS_RANDOM.VALUE(1000, 9999)), 4, '0')
+      );
+    END LOOP;
+  END LOOP;
+
+  COMMIT;
+END;
