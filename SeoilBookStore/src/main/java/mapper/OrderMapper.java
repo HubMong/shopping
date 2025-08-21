@@ -17,55 +17,56 @@ public interface OrderMapper {
     public List<Order> selectByMemberId(int memberId);
 
     @Select("SELECT * FROM ORDERS ORDER BY order_date desc")
-    public List<Order> selectAll();
-    
+    List<Order> selectAll();
+
     @Select("SELECT * FROM ORDERS WHERE transaction_id = #{transactionId}")
     List<Order> selectByTransactionId(String transactionId);
 
     @Insert({
-    	  "<script>",
-    	  "INSERT INTO ORDERS (id, member_id, book_id, quantity, total_price, order_date, transaction_id)",
-    	  "VALUES (",
-    	  "  ORDERS_SEQ.NEXTVAL,",
-    	  "  #{memberId}, #{bookId}, #{quantity}, #{totalPrice},",
-    	  "  NVL(#{orderDate,jdbcType=TIMESTAMP}, CURRENT_DATE),",  // ✅ 테스트 시 원하는 날짜 주입 가능
-    	  "  #{transactionId}",
-    	  ")",
-    	  "</script>"
-    	})
-    	int insert(Order order);
+        "<script>",
+        "INSERT INTO ORDERS (id, member_id, book_id, quantity, total_price, order_date, transaction_id)",
+        "VALUES (",
+        "  ORDERS_SEQ.NEXTVAL,",
+        "  #{memberId}, #{bookId}, #{quantity}, #{totalPrice},",
+        "  NVL(#{orderDate,jdbcType=TIMESTAMP}, CURRENT_DATE),",
+        "  #{transactionId}",
+        ")",
+        "</script>"
+    })
+    int insert(Order order);
 
-    
-    // 주문 ID로 특정 주문 조회
     @Select("SELECT * FROM ORDERS WHERE id = #{orderId}")
-    public Order selectById(int orderId);
-    
-    @Select("SELECT o.id, o.member_id AS memberId, "
-    		+ "o.book_id AS bookId,o.quantity, o.total_price AS totalPrice, o.order_date AS orderDate, "
-    		+ "b.id AS b_id, b.title AS b_title,"
-    		+ " m.id AS m_id, m.name AS m_name "
-    		+ "FROM ORDERS o JOIN BOOK b ON o.book_id = b.id "
-    		+ "JOIN MEMBER m ON o.member_id = m.id "	
-    		+ "WHERE TO_CHAR(o.id) LIKE '%' || #{keyword} || '%' "
-    		+ "OR LOWER(b.title) LIKE '%' || #{keyword} || '%' "
-    		+ "OR LOWER(m.name) LIKE '%' || #{keyword} || '%' "
-    		+ "ORDER BY o.id DESC")
-        @Results({
-            @Result(property="id", column="id"),
-            @Result(property="memberId", column="memberId"),
-            @Result(property="bookId", column="bookId"),
-            @Result(property="quantity", column="quantity"),
-            @Result(property="totalPrice", column="totalPrice"),
-            @Result(property="orderDate", column="orderDate"),
-            @Result(property="book.id", column="b_id"),
-            @Result(property="book.title", column="b_title"),
-            @Result(property="member.id", column="m_id"),
-            @Result(property="member.name", column="m_name")
-        })
-    	List<Order> search(String keyword);
-    
+    Order selectById(int orderId);
+
+    @Select({
+        "SELECT o.id, o.member_id AS memberId, ",
+        "       o.book_id AS bookId, o.quantity, o.total_price AS totalPrice, o.order_date AS orderDate, ",
+        "       b.id AS b_id, b.title AS b_title,",
+        "       m.id AS m_id, m.name AS m_name ",
+        "FROM ORDERS o ",
+        "JOIN BOOK b ON o.book_id = b.id ",
+        "JOIN MEMBER m ON o.member_id = m.id ",
+        "WHERE TO_CHAR(o.id) LIKE '%' || #{keyword} || '%' ",
+        "   OR LOWER(b.title) LIKE '%' || #{keyword} || '%' ",
+        "   OR LOWER(m.name)  LIKE '%' || #{keyword} || '%' ",
+        "ORDER BY o.id DESC"
+    })
+    @Results({
+        @Result(property="id", column="id"),
+        @Result(property="memberId", column="memberId"),
+        @Result(property="bookId", column="bookId"),
+        @Result(property="quantity", column="quantity"),
+        @Result(property="totalPrice", column="totalPrice"),
+        @Result(property="orderDate", column="orderDate"),
+        @Result(property="book.id", column="b_id"),
+        @Result(property="book.title", column="b_title"),
+        @Result(property="member.id", column="m_id"),
+        @Result(property="member.name", column="m_name")
+    })
+    List<Order> search(String keyword);
+
     // =========================
-    // [ADD] 관리자 필터 조회
+    // 관리자 필터 조회
     // =========================
     @Select({
         "<script>",
@@ -80,20 +81,13 @@ public interface OrderMapper {
         "FROM ORDERS o",
         "JOIN MEMBER m ON m.id = o.member_id",
         "<where>",
-        // 1) 거래ID: 부분일치 + 대소문자 무시
         "  <if test='transactionId != null and transactionId != \"\"'>",
         "    AND UPPER(o.transaction_id) LIKE '%' || UPPER(#{transactionId}) || '%'",
         "  </if>",
-
-        // 2) 회원검색: 이름 or 아이디 둘 다 부분일치 + 대소문자 무시
         "  <if test='memberName != null and memberName != \"\"'>",
-        "    AND (",
-        "         UPPER(m.name)    LIKE '%' || UPPER(#{memberName}) || '%'",
-        "      OR UPPER(m.user_id) LIKE '%' || UPPER(#{memberName}) || '%'",  // user_id 컬럼 사용
-        "    )",
+        "    AND (UPPER(m.name) LIKE '%' || UPPER(#{memberName}) || '%' ",
+        "         OR UPPER(m.user_id) LIKE '%' || UPPER(#{memberName}) || '%')",
         "  </if>",
-
-        // 3) 기간: 종료일 포함 (endDate + 1일 미만)
         "  <if test='startDate != null and startDate != \"\"'>",
         "    AND o.order_date &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')",
         "  </if>",
@@ -110,11 +104,14 @@ public interface OrderMapper {
         @Param("startDate")     String startDate,
         @Param("endDate")       String endDate
     );
-    
+
+    // ===== 통계: 일 단위 (라벨, 건수, 총수량, 총금액) =====
     @Select({
         "<script>",
         "SELECT TO_CHAR(o.order_date,'YYYY-MM-DD') AS label,",
-        "       COUNT(DISTINCT o.transaction_id)   AS count",
+        "       COUNT(DISTINCT o.transaction_id)   AS count,",
+        "       SUM(o.quantity)                    AS sumQty,",
+        "       SUM(o.total_price)                 AS sumAmount",
         "FROM ORDERS o JOIN MEMBER m ON m.id = o.member_id",
         "<where>",
         "  <if test='transactionId != null and transactionId != \"\"'>",
@@ -146,7 +143,9 @@ public interface OrderMapper {
     @Select({
         "<script>",
         "SELECT TO_CHAR(o.order_date,'YYYY-MM')    AS label,",
-        "       COUNT(DISTINCT o.transaction_id)   AS count",
+        "       COUNT(DISTINCT o.transaction_id)   AS count,",
+        "       SUM(o.quantity)                    AS sumQty,",
+        "       SUM(o.total_price)                 AS sumAmount",
         "FROM ORDERS o JOIN MEMBER m ON m.id = o.member_id",
         "<where>",
         "  <if test='transactionId != null and transactionId != \"\"'>",
@@ -178,7 +177,9 @@ public interface OrderMapper {
     @Select({
         "<script>",
         "SELECT TO_CHAR(o.order_date,'YYYY')       AS label,",
-        "       COUNT(DISTINCT o.transaction_id)   AS count",
+        "       COUNT(DISTINCT o.transaction_id)   AS count,",
+        "       SUM(o.quantity)                    AS sumQty,",
+        "       SUM(o.total_price)                 AS sumAmount",
         "FROM ORDERS o JOIN MEMBER m ON m.id = o.member_id",
         "<where>",
         "  <if test='transactionId != null and transactionId != \"\"'>",
@@ -205,38 +206,37 @@ public interface OrderMapper {
         @Param("startDate")     String startDate,
         @Param("endDate")       String endDate
     );
-    
-    
-    // [ADDED] 인기 도서 Top-N (기간 필터)
+
+    // ===== 인기 도서 Top-N (기간 필터) =====
     @Select({
-    	  "<script>",
-    	  "SELECT * FROM (",
-    	  "  SELECT",
-    	  "    MAX(b.title) AS label,",
-    	  "    SUM(o.quantity) AS count",
-    	  "  FROM ORDERS o",
-    	  "  JOIN BOOK b ON b.id = o.book_id",
-    	  "  <where>",
-    	  "    <if test='startDate != null and startDate.trim() != \"\"'>",
-    	  "      AND o.order_date &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')",
-    	  "    </if>",
-    	  "    <if test='endDate != null and endDate.trim() != \"\"'>",
-    	  "      AND o.order_date &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1",
-    	  "    </if>",
-    	  "    <if test='title != null and title.trim() != \"\"'>",
-    	  "      AND LOWER(b.title) LIKE '%' || LOWER(#{title}) || '%'",
-    	  "    </if>",
-    	  "    <if test='author != null and author.trim() != \"\"'>",
-    	  "      AND LOWER(b.author) LIKE '%' || LOWER(#{author}) || '%'",
-    	  "    </if>",
-    	  "  </where>",
-    	  "  GROUP BY b.id",
-    	  "  ORDER BY SUM(o.quantity) DESC",
-    	  ")",
-    	  "<if test='limit != null and limit > 0'>",
-    	  " WHERE ROWNUM &lt;= #{limit}",
-    	  "</if>",
-    	  "</script>"
+        "<script>",
+        "SELECT * FROM (",
+        "  SELECT",
+        "    MAX(b.title) AS label,",
+        "    SUM(o.quantity) AS count",
+        "  FROM ORDERS o",
+        "  JOIN BOOK b ON b.id = o.book_id",
+        "  <where>",
+        "    <if test='startDate != null and startDate.trim() != \"\"'>",
+        "      AND o.order_date &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')",
+        "    </if>",
+        "    <if test='endDate != null and endDate.trim() != \"\"'>",
+        "      AND o.order_date &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1",
+        "    </if>",
+        "    <if test='title != null and title.trim() != \"\"'>",
+        "      AND LOWER(b.title) LIKE '%' || LOWER(#{title}) || '%'",
+        "    </if>",
+        "    <if test='author != null and author.trim() != \"\"'>",
+        "      AND LOWER(b.author) LIKE '%' || LOWER(#{author}) || '%'",
+        "    </if>",
+        "  </where>",
+        "  GROUP BY b.id",
+        "  ORDER BY SUM(o.quantity) DESC",
+        ")",
+        "<if test='limit != null and limit > 0'>",
+        " WHERE ROWNUM &lt;= #{limit}",
+        "</if>",
+        "</script>"
     })
     List<StatPoint> selectTopBookSales(
         @Param("startDate") String startDate,
