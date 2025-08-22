@@ -39,7 +39,7 @@ INSERT INTO BOOK (id, title, author, price, description, image, stock) VALUES (b
 INSERT INTO BOOK(id, title, author, price, description, image, stock) values(book_seq.nextval, '치유의 빛','강화길',22000,'아무리 발버둥을 치고 몸부림을 쳐도 벗어날 수 없는 나의 몸, 나의 고통, 나의 과거','치유의 빛.jpg',100);
 INSERT INTO BOOK(id, title, author, price, description, image, stock) values(book_seq.nextval, '생각의 주도권을 디자인하라','박용후',21000,'AI를 도구를 넘어 무기로 만드는 질문의 힘','생각의 주도권을 디자인하라.jpg',100);
 INSERT INTO BOOK(id, title, author, price, description, image, stock) values(book_seq.nextval, '첫 여름, 완주','김금희',15000,'내용 생략','첫 여름, 완주.jpg',100);
-INSERT INTO BOOK(id, title, author, price, description, image, stock) values(book_seq.nextval, '소설 보다: 여름 2025','김지연',25000,'내용 생략','소설 보다: 여름 2025.jpg',100);
+INSERT INTO BOOK(id, title, author, price, description, image, stock) values(book_seq.nextval, '소설 보다: 여름 2025','김지연',25000,'내용 생략','소설 보다 여름 2025.jpg',100);
 INSERT INTO BOOK(id, title, author, price, description, image, stock) values(book_seq.nextval, '소크라테스의 변명·크리톤·파이돈·향연(그리스어 원전 완역본)','박문재',25000,'내용 생략','소크라테스의 변명·크리톤·파이돈·향연(그리스어 원전 완역본).jpg',100);
 INSERT INTO BOOK(id, title, author, price, description, image, stock) values(book_seq.nextval, '워런 버핏 바이블 2021','이건',25000,'내용 생략','워런 버핏 바이블 2021.jpg',100);
 INSERT INTO BOOK(id, title, author, price, description, image, stock) values(book_seq.nextval, '너무 늦은 시간','허진',25000,'내용 생략','너무 늦은 시간.jpg',100);
@@ -97,5 +97,6 @@ CREATE TABLE review (
 );
 DROP SEQUENCE review_seq;
 CREATE SEQUENCE review_seq START WITH 1 INCREMENT BY 1;
+
 
 
