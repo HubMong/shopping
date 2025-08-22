@@ -9,142 +9,6 @@
   <title>베스트셀러 Top 5 - SEOIL 서일문고</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/list.css">
-  <style>
-    /* 히어로 (#1) 강조 */
-    .best-hero{
-        display: grid;
-        grid-template-columns: 280px 1fr; /* 이미지와 정보 컬럼 */
-        gap: 30px;
-        align-items: center; /* 세로 중앙 정렬로 변경 */
-        background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 8px 24px rgba(0,0,0,.06);
-        padding: 24px;
-        position: relative; /* 자식 요소 absolute 포지셔닝 기준 */
-        margin-bottom: 28px;
-    }
-    .best-hero .badge{
-        position:absolute;
-        top: -10px;
-        left: -10px;
-        background:linear-gradient(135deg,#ff6b6b,#ff8e53);
-        color:#fff;
-        font-weight:700;
-        border-radius:12px;
-        padding:8px 14px;
-        box-shadow:0 6px 18px rgba(255,107,107,.35);
-        z-index: 2;
-    }
-    .best-hero .cover {
-        width: 280px;
-        border-radius: 12px;
-        overflow: hidden;
-        background: #f8f8f8;
-    }
-    .best-hero .cover img{width:100%;height:auto;display:block}
-    
-    /* 정보 섹션 */
-    .best-hero .detail { padding-right: 150px; } /* 버튼과 겹치지 않게 패딩 추가 */
-    .best-hero .detail h2{margin: 0 0 12px; font-size:28px; line-height:1.3;}
-    .best-hero .detail .author{color:#666; margin-bottom:16px; font-size: 16px;}
-    
-    .best-hero .detail .meta{display:flex; gap:20px; align-items:center; margin-bottom:16px;}
-    .best-hero .detail .price{font-size:22px;font-weight:700}
-    
-    .best-hero .detail .description {
-        color: #555;
-        font-size: 15px;
-        line-height: 1.7;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 4;
-        -webkit-box-orient: vertical;
-        margin-bottom: 20px; /* 상세보기 버튼과의 간격 */
-    }
-
-    /* 상세보기 버튼 추가 */
-    .best-hero .detail .detail-button-container {
-        margin-top: auto; /* 맨 아래로 밀기 */
-    }
-    .best-hero .detail .detail-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 16px;
-        border-radius: 8px;
-        background: #343a40;
-        color: #fff;
-        text-decoration: none;
-        font-weight: 600;
-        transition: background-color 0.2s;
-    }
-    .best-hero .detail .detail-button:hover {
-        background: #23272b;
-    }
-
-    /* 버튼 컨테이너 - 제목과 y축을 맞추기 위해 transform 조정 */
-    .best-hero .cta {
-        position: absolute;
-        top: 50%;
-        right: 24px; 
-        transform: translateY(-100%); /* 제목 위치에 근사하도록 조정 */
-        display: flex;
-        flex-direction: column; 
-        gap: 10px;
-        z-index: 1;
-    }
-
-    .best-hero .cta button {
-        padding: 12px 20px;
-        font-size: 1rem;
-        font-weight: 600;
-        border-radius: 8px;
-        border: 1.5px solid #007bff;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        white-space: nowrap; 
-    }
-
-    .best-hero .cta .cart {
-        background-color: #fff;
-        color: #007bff;
-    }
-    .best-hero .cta .cart:hover { background-color: #f0f8ff; }
-
-    .best-hero .cta .buy-now {
-        background-color: #007bff;
-        color: #fff;
-    }
-    .best-hero .cta .buy-now:hover { background-color: #0056b3; }
-
-
-    /* 랭크 배지 */
-    .rank-badge{position:absolute;top:10px;left:10px;background:linear-gradient(135deg,#ff6b6b,#ff8e53);color:#fff;font-weight:700;border-radius:10px;
-padding:6px 10px;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
-
-    /* 그리드 (#2~#5) */
-    .bests-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
-    .bests-card{position:relative;background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.05);
-overflow:hidden;transition:transform .15s ease, box-shadow .15s ease}
-    .bests-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.08)}
-    .bests-card .thumb{aspect-ratio:3/4;display:block;background:#f6f6f6}
-    .bests-card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-    .bests-card .info{padding:12px}
-    .bests-card .title{font-weight:700;height:44px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-    .bests-card .author{color:#666;margin:6px 0 8px}
-    .bests-card .foot{display:flex;justify-content:space-between;align-items:center}
-    .bests-card .price{font-weight:800}
-
-    /* 페이지 타이틀 */
-    .page-title{display:flex;align-items:center;gap:12px;margin:18px 0}
-    .page-title h1{margin:0;font-size:24px}
-    .page-title .sub{color:#888}
-
-    @media (max-width:1100px){.bests-grid{grid-template-columns:repeat(3,1fr)}}
-    @media (max-width:820px){.best-hero{grid-template-columns:1fr; align-items: flex-start;}.best-hero .detail {padding-right: 0;}.best-hero .cta {position: static; transform: none; flex-direction: row; width: 100%; margin-top: 20px;}}
-    @media (max-width:560px){.bests-grid{grid-template-columns:1fr}}
-  </style>
 </head>
 
 <body>
@@ -233,13 +97,14 @@ overflow:hidden;transition:transform .15s ease, box-shadow .15s ease}
             <div class="author">${b.author}</div>
             <div class="meta">
               <div class="price"><fmt:formatNumber value="${b.price}" pattern="#,###"/>원</div>
+				<div class="review">
+				  <span class="stars">★</span> 
+				  <strong><fmt:formatNumber value="${empty top1AvgScore ? 0 : top1AvgScore}" pattern="0.0"/></strong>
+				  (${empty top1ReviewCount ? 0 : top1ReviewCount}개)
+				</div>
             </div>
+
             <div class="description">${b.description}</div>
-            <div class="detail-button-container">
-                <a class="detail-button" href="${pageContext.request.contextPath}/books/${b.id}">
-                    <i class="fas fa-book-open"></i> 상세보기
-                </a>
-            </div>
           </div>
           <div class="cta">
               <form action="${pageContext.request.contextPath}/cart/add" method="post">
@@ -250,6 +115,10 @@ overflow:hidden;transition:transform .15s ease, box-shadow .15s ease}
                   <input type="hidden" name="bookId" value="${b.id}">
                   <input type="hidden" name="quantity" value="1">
                   <button type="submit" class="buy-now">바로구매</button>
+              </form>
+              <form action="${pageContext.request.contextPath}/books/${b.id}" method="get">
+	              <input type="hidden" name="bookId" value="${b.id}">
+	              <button type="submit" class="detail-button">상세보기</button>
               </form>
           </div>
         </div>

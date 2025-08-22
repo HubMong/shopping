@@ -64,7 +64,7 @@ public interface BookMapper {
     	    "GROUP BY b.id, b.title, b.author, b.price, b.description, b.image, b.stock, b.sales_volume " +
     	    "ORDER BY weightedScore DESC, reviewCount DESC, b.sales_volume DESC NULLS LAST, b.id DESC"
     	)
-    	java.util.List<model.Book> selectRecommended(@org.apache.ibatis.annotations.Param("m") int m,
+    	List<model.Book> selectRecommended(@org.apache.ibatis.annotations.Param("m") int m,
     	                                            @org.apache.ibatis.annotations.Param("C") double C);
 
     

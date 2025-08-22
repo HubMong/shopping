@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import mapper.ReviewMapper;
 import model.Book;
 import model.Member;
 import model.Review;
@@ -37,6 +39,9 @@ public class BookController {
 	
 	@Autowired
 	private AdminService adminService;
+	
+	@Autowired
+	private ReviewMapper reviewMapper;
 	
 	@GetMapping({"/", "/books"})
 	public String home(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
@@ -87,9 +92,22 @@ public class BookController {
 	
 	@GetMapping("/bestsellers")
 	public String bestsellers(Model model) {
-	    // Top 5 조회 (BookService에 getBestsellers(int) 만들어 두셨죠)
-	    model.addAttribute("bestsellers", bookService.getBestsellers(5));
-	    return "user/bestsellers"; // JSP 경로
+	    List<Book> bestsellers = bookService.getBestsellers(5);
+
+	    if (!bestsellers.isEmpty()) {
+	        Book top1 = bestsellers.get(0); // 1위 책
+	        int reviewCount = reviewMapper.countByBookId(top1.getId());
+	        int sumScore = reviewMapper.sumScoreByBookId(top1.getId());
+	        double avgScore = reviewCount > 0 ? (double) sumScore / reviewCount : 0.0;
+
+	        // VO에 넣지 않고 Model에 따로 추가
+	        model.addAttribute("top1", top1); 
+	        model.addAttribute("top1ReviewCount", reviewCount);
+	        model.addAttribute("top1AvgScore", avgScore);
+	    }
+
+	    model.addAttribute("bestsellers", bestsellers);
+	    return "user/bestsellers";
 	}
 
 
@@ -135,9 +153,9 @@ public class BookController {
 	    Member loginUser = (Member) session.getAttribute("loginUser");
 	    model.addAttribute("loginUser", loginUser);
 
-	    java.util.List<Book> top5 = bookService.getRecommendedTopN(5);
+	    List<Book> top5 = bookService.getRecommendedTopN(5);
 	    model.addAttribute("top1", top5.isEmpty() ? null : top5.get(0));
-	    model.addAttribute("others", top5.size() > 1 ? top5.subList(1, top5.size()) : java.util.Collections.emptyList());
+	    model.addAttribute("others", top5.size() > 1 ? top5.subList(1, top5.size()) : Collections.emptyList());
 	    return "user/recommended"; // 추천 전용 JSP
 	}
 

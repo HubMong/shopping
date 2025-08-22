@@ -1,5 +1,6 @@
 package service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,16 +98,14 @@ public class BookService {
     }
     
     public List<Book> getBestsellers(int limit) {
-        return reviewMapper == null ? // 그냥 참고: 기존 구조 유지
-            bookMapper.selectBestsellers(limit) :
-            bookMapper.selectBestsellers(limit);
+        return bookMapper.selectBestsellers(limit);
     }
 
-    public java.util.List<Book> getRecommendedTopN(int n) {
+    public List<Book> getRecommendedTopN(int n) {
         double C = reviewMapper.selectGlobalAvgScore(); // 전체 평균 평점
         int m = 5;                                      // 최소 리뷰수 가중치(5~10 추천)
-        java.util.List<Book> all = bookMapper.selectRecommended(m, C);
-        if (all == null) return java.util.Collections.emptyList();
+        List<Book> all = bookMapper.selectRecommended(m, C);
+        if (all == null) return Collections.emptyList();
         return all.size() > n ? all.subList(0, n) : all;
     }
 
