@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -198,41 +199,35 @@ public class BookController {
 	    return "redirect:/books/" + origin.getBookId();
 	}
 	
-	@PostMapping(value = "review/update.json", produces = MediaType.APPLICATION_JSON_VALUE) // [ADDED]
-	@ResponseBody // [ADDED] Map -> JSON
-	public Map<String, Object> updateInline(
-	        @RequestParam("id") int id,
-	        @RequestParam("content") String content,
-	        @SessionAttribute(value = "loginUser", required = false) Member loginUser) {
+	@PostMapping("/review/update.json")
+	@ResponseBody
+	public Map<String,Object> updateJson(
+	        @RequestParam int id,
+	        @RequestParam String content,
+	        @RequestParam int score,
+	        HttpSession session) {
 
-	    Map<String, Object> res = new java.util.HashMap<>();
+	    Map<String,Object> res = new HashMap<>();
+	    try {
+	        Member loginUser = (Member) session.getAttribute("loginUser");
+	        if (loginUser == null) throw new RuntimeException("로그인이 필요합니다.");
 
-	    if (loginUser == null) {
+	        Review origin = bookService.getReviewById(id);
+	        if (origin == null) throw new RuntimeException("리뷰를 찾을 수 없습니다.");
+	        if (origin.getMemberId() != loginUser.getId()) throw new RuntimeException("수정 권한이 없습니다.");
+
+	        origin.setContent(content);
+	        origin.setScore(score);
+
+	        int updated = bookService.update(origin);
+	        if (updated == 0) throw new RuntimeException("수정 실패");
+
+	        res.put("ok", true);
+	    } catch(Exception e) {
 	        res.put("ok", false);
-	        res.put("message", "로그인이 필요합니다.");
-	        return res;
+	        res.put("message", e.getMessage());
 	    }
-
-	    Review origin = bookService.getReviewById(id);
-	    if (origin == null) {
-	        res.put("ok", false);
-	        res.put("message", "리뷰를 찾을 수 없습니다.");
-	        return res;
-	    }
-	    if (origin.getMemberId() != loginUser.getId()) {
-	        res.put("ok", false);
-	        res.put("message", "수정 권한이 없습니다.");
-	        return res;
-	    }
-
-	    origin.setContent(content);
-	    // 점수까지 바꾸고 싶으면: origin.setScore(review.getScore());
-	    int rows = bookService.update(origin); // updateByOwner 쓰면 더 안전
-
-	    res.put("ok", rows > 0);
-	    if (rows == 0) res.put("message", "수정에 실패했습니다.");
 	    return res;
 	}
-
 	
 }

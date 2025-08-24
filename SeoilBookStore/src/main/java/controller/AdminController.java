@@ -222,6 +222,7 @@ public class AdminController {
         member.setName(name);
         member.setPhone(phone);
         member.setAddress(address);
+        memberservice.modifyById(member);
         return "redirect:/admin/adminmemberlist";
     }
 

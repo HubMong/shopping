@@ -22,7 +22,7 @@ public interface MemberMapper {
 	@Select("SELECT * FROM member WHERE user_id = #{userId}")
 	Member selectByUserId(String userId);
 
-	@Select("SELECT * FROM member")
+	@Select("SELECT * FROM member ORDER BY created_At DESC")
 	List<Member> selectAll();
 
 	@Insert("INSERT INTO member (id, user_id, password, name, phone, address, created_at, role) "
