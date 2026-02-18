@@ -1,0 +1,124 @@
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>${title} - 도서 수정</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 700px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .buttons button,
+        .buttons a {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .buttons button {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .buttons a {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>도서 정보 수정</h2>
+    <!-- multipart로 변경 -->
+    <form action="${pageContext.request.contextPath}/admin/book/edit" method="post" enctype="multipart/form-data">
+        <div>
+            <label>도서 제목</label><br>
+            <input type="text" name="title" value="${title}" required>
+        </div>
+        
+        <div>
+            <label>저자</label><br>
+            <input type="text" name="title" value="${author}" required>
+        </div>
+
+        <div>
+            <label>도서 설명</label><br>
+            <textarea name="description" rows="5">${description}</textarea>
+        </div>
+
+        <div>
+            <label>가격</label><br>
+            <input type="number" name="price" value="${price}" required>
+        </div>
+
+        <div>
+            <label>도서 이미지 업로드</label><br>
+            <input type="file" name="imageFile" accept="image/*">
+            <br><small>※ 미선택 시 기존 이미지 유지</small>
+        </div>
+
+        <div class="buttons">
+            <button type="submit">수정 완료</button>
+            <a href="${pageContext.request.contextPath}/admin/book/detail?title=${title}">취소</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

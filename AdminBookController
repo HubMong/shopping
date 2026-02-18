@@ -1,0 +1,57 @@
+package controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+@Controller
+@RequestMapping("/admin/book")
+public class AdminBookController {
+
+    // ① 상세 보기
+    @GetMapping("/detail")
+    public String showBookDetail(@RequestParam("title") String title, Model model) {
+        // 실제 서비스에서는 DB에서 조회
+        model.addAttribute("title", title);
+        model.addAttribute("author","홍길동");
+        model.addAttribute("description", "\"몸은 전장이다, 강화길의 서스펜스\" ...");
+        model.addAttribute("price", 25000);
+        model.addAttribute("imagePath", "/resources/images/book1.jpg");
+        return "admin-detail";
+    }
+
+    // ② 수정 폼 진입
+    @GetMapping("/edit")
+    public String showEditForm(@RequestParam("title") String title, Model model) {
+        // 실제로는 title로 DB 조회
+        model.addAttribute("title", title);
+        model.addAttribute("author","홍길동");
+        model.addAttribute("description", "\"몸은 전장이다, 강화길의 서스펜스\" ...");
+        model.addAttribute("price", 25000);
+        model.addAttribute("imagePath", "/resources/images/book1.jpg");
+        return "admin-edit";
+    }
+
+    // ③ 수정 처리
+    @PostMapping("/edit")
+    public String processEdit(@RequestParam("title") String title,
+    						  @RequestParam("author") String author,
+                              @RequestParam("description") String description,
+                              @RequestParam("price") int price,
+                              @RequestParam("imagePath") String imagePath) {
+        // 실제로는 DB 업데이트 수행
+        // 예: bookService.update(title, description, price, imagePath);
+
+        return "redirect:/admin/book/detail?title=" + URLEncoder.encode(title, StandardCharsets.UTF_8);
+    }
+
+    // ④ 삭제 처리
+    @PostMapping("/delete")
+    public String deleteBook(@RequestParam("title") String title) {
+        // 실제로는 DB 삭제 수행
+        return "redirect:/admin/book/list"; // 삭제 후 목록 페이지로 이동
+    }
+}
